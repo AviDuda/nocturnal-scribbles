@@ -37,7 +37,7 @@ describe("templates", () => {
 			join(TEMPLATES_DIR, "base.html"),
 			`<!DOCTYPE html>
 <html>
-<head><title>{{TITLE}}</title><meta name="description" content="{{DESCRIPTION}}"></head>
+<head><title>{{TITLE}}</title><meta name="description" content="{{DESCRIPTION}}">{{ARTICLE_META}}</head>
 <body>{{CONTENT}}</body>
 </html>`,
 		);
@@ -166,13 +166,12 @@ describe("templates", () => {
 
 	describe("applyBaseTemplate", () => {
 		test("should replace title and content placeholders", async () => {
-			const result = await applyBaseTemplate(
-				"<p>Hello</p>",
-				"Test Title",
-				"Test description",
-				{},
-				TEMPLATES_DIR,
-			);
+			const result = await applyBaseTemplate({
+				content: "<p>Hello</p>",
+				title: "Test Title",
+				description: "Test description",
+				templatesDir: TEMPLATES_DIR,
+			});
 
 			expect(result).toContain("<title>Test Title</title>");
 			expect(result).toContain('content="Test description"');
@@ -195,6 +194,32 @@ describe("templates", () => {
 
 			expect(result).toContain("/static/style-abc123.css");
 			expect(result).not.toContain("/static/style.css");
+		});
+
+		test("should include article meta tags when publishedTime is provided", async () => {
+			const result = await applyBaseTemplate({
+				content: "<p>Post content</p>",
+				title: "Test Post",
+				templatesDir: TEMPLATES_DIR,
+				ogType: "article",
+				publishedTime: "2025-01-15T00:00:00.000Z",
+			});
+
+			expect(result).toContain(
+				'article:published_time" content="2025-01-15T00:00:00.000Z"',
+			);
+			expect(result).toContain('article:author" content="aviraccoon"');
+		});
+
+		test("should not include article meta tags when publishedTime is not provided", async () => {
+			const result = await applyBaseTemplate({
+				content: "<p>Page content</p>",
+				title: "Test Page",
+				templatesDir: TEMPLATES_DIR,
+			});
+
+			expect(result).not.toContain("article:published_time");
+			expect(result).not.toContain("article:author");
 		});
 	});
 

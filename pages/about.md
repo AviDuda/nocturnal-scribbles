@@ -37,7 +37,7 @@ The "nocturnal scribbles" part is literal - I do my best work between 10pm and 4
 
 # This blog
 
-Custom static site generator, built in one night with Bun and TypeScript. No frameworks, no tracking, no analytics, no bullshit. Just markdown files in git that become HTML.
+[Custom static site generator](https://github.com/AviDuda/nocturnal-scribbles), built in one night with Bun and TypeScript. No frameworks, no tracking, no analytics, no bullshit. Just markdown files in git that become HTML.
 
 # Get in touch
 

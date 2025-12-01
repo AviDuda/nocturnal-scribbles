@@ -8,6 +8,8 @@ import {
 	HOMEPAGE_POST_LIMIT,
 	ROOT_DIR,
 	SITE_DESCRIPTION,
+	SITE_TITLE,
+	SITE_URL,
 	TEMPLATES_DIR,
 } from "./config";
 import { groupPostsByYearMonth } from "./content";
@@ -69,14 +71,38 @@ export async function readTemplate(
  * Wraps content in the base HTML template with title and description.
  * Replaces static asset references with hashed versions.
  */
+type BaseTemplateOptions = {
+	content: string;
+	title: string;
+	description?: string;
+	assetMap?: StaticAssetMap;
+	templatesDir?: string;
+	rootDir?: string;
+	canonicalPath?: string;
+	ogType?: "website" | "article";
+	/** ISO date string for article:published_time (posts only) */
+	publishedTime?: string;
+};
+
 export async function applyBaseTemplate(
-	content: string,
-	title: string,
-	description = "",
-	assetMap: StaticAssetMap = {},
-	templatesDir = TEMPLATES_DIR,
-	rootDir = ROOT_DIR,
+	options: BaseTemplateOptions,
 ): Promise<string> {
+	const {
+		content,
+		title,
+		description = "",
+		assetMap = {},
+		templatesDir = TEMPLATES_DIR,
+		rootDir = ROOT_DIR,
+		canonicalPath = "/",
+		ogType = "website",
+		publishedTime,
+	} = options;
+
+	const articleMeta = publishedTime
+		? `\n    <meta property="article:published_time" content="${publishedTime}">\n    <meta property="article:author" content="aviraccoon">`
+		: "";
+
 	let baseTemplate = await readTemplate("base.html", templatesDir);
 
 	// Process {{INCLUDE:path}} directives
@@ -88,9 +114,15 @@ export async function applyBaseTemplate(
 	}
 
 	return baseTemplate
-		.replace("{{TITLE}}", title)
-		.replace("{{DESCRIPTION}}", description)
-		.replace("{{CONTENT}}", content);
+		.replaceAll("{{TITLE}}", title)
+		.replaceAll("{{DESCRIPTION}}", description)
+		.replace("{{CONTENT}}", content)
+		.replace("{{BUILD_TIME}}", new Date().toISOString())
+		.replace("{{CANONICAL_URL}}", `${SITE_URL}${canonicalPath}`)
+		.replace("{{OG_TYPE}}", ogType)
+		.replace("{{SITE_TITLE}}", SITE_TITLE)
+		.replace("{{SITE_URL}}", SITE_URL)
+		.replace("{{ARTICLE_META}}", articleMeta);
 }
 
 /**
@@ -160,13 +192,16 @@ export async function generatePostPage(
 		postHtml = postHtml.replace(/{{#TAGS}}[\s\S]*?{{\/TAGS}}/g, "");
 	}
 
-	return applyBaseTemplate(
-		postHtml,
-		post.frontmatter.title,
-		post.frontmatter.description || "",
+	return applyBaseTemplate({
+		content: postHtml,
+		title: post.frontmatter.title,
+		description: post.frontmatter.description,
 		assetMap,
 		templatesDir,
-	);
+		canonicalPath: `/posts/${post.slug}/`,
+		ogType: "article",
+		publishedTime: new Date(post.frontmatter.date).toISOString(),
+	});
 }
 
 /**
@@ -183,13 +218,14 @@ export async function generateSimplePage(
 		.replace("{{TITLE}}", page.frontmatter.title)
 		.replace("{{CONTENT}}", page.html);
 
-	return applyBaseTemplate(
-		pageHtml,
-		page.frontmatter.title,
-		page.frontmatter.description || "",
+	return applyBaseTemplate({
+		content: pageHtml,
+		title: page.frontmatter.title,
+		description: page.frontmatter.description,
 		assetMap,
 		templatesDir,
-	);
+		canonicalPath: `/${page.slug}/`,
+	});
 }
 
 /**
@@ -225,13 +261,14 @@ export async function generateIndexPage(
 		);
 	}
 
-	return applyBaseTemplate(
-		indexContent,
-		"Home",
-		SITE_DESCRIPTION,
+	return applyBaseTemplate({
+		content: indexContent,
+		title: "Home",
+		description: SITE_DESCRIPTION,
 		assetMap,
 		templatesDir,
-	);
+		canonicalPath: "/",
+	});
 }
 
 /**
@@ -256,13 +293,14 @@ export async function generateTagPage(
 		.replace("{{POST_COUNT_PLURAL}}", postCountPlural)
 		.replace("{{POSTS}}", `<ul class="post-list">${postsList}</ul>`);
 
-	return applyBaseTemplate(
-		tagContent,
-		`Tag: ${tag}`,
-		`Posts tagged with ${tag}`,
+	return applyBaseTemplate({
+		content: tagContent,
+		title: `Tag: ${tag}`,
+		description: `Posts tagged with ${tag}`,
 		assetMap,
 		templatesDir,
-	);
+		canonicalPath: `/tags/${tag}/`,
+	});
 }
 
 /**
@@ -288,13 +326,14 @@ export async function generateTagsIndexPage(
 
 	const tagsContent = tagsIndexTemplate.replace("{{TAGS}}", tagsList);
 
-	return applyBaseTemplate(
-		tagsContent,
-		"Tags",
-		"All tags used in posts",
+	return applyBaseTemplate({
+		content: tagsContent,
+		title: "Tags",
+		description: "All tags used in posts",
 		assetMap,
 		templatesDir,
-	);
+		canonicalPath: "/tags/",
+	});
 }
 
 /**
@@ -354,11 +393,12 @@ export async function generateArchivePage(
 		.replace("{{POST_COUNT_PLURAL}}", postCountPlural)
 		.replace("{{CONTENT}}", archiveContent);
 
-	return applyBaseTemplate(
-		archiveHtml,
-		"Archive",
-		"All posts organized by date",
+	return applyBaseTemplate({
+		content: archiveHtml,
+		title: "Archive",
+		description: "All posts organized by date",
 		assetMap,
 		templatesDir,
-	);
+		canonicalPath: "/archive/",
+	});
 }

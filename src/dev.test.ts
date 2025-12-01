@@ -406,8 +406,8 @@ describe("Dev Server", () => {
 			// Write a markdown file to trigger rebuild
 			writeFileSync(join(TEST_DIRS.watchDir, "test-post.md"), "# Test");
 
-			// Wait for fs event to propagate
-			await Bun.sleep(150);
+			// Wait for fs event to propagate (longer timeout for CI reliability)
+			await Bun.sleep(300);
 
 			expect(rebuildCalled).toBe(true);
 
@@ -432,7 +432,7 @@ describe("Dev Server", () => {
 			);
 
 			// Wait to ensure no rebuild is triggered
-			await Bun.sleep(150);
+			await Bun.sleep(300);
 
 			expect(rebuildCalled).toBe(false);
 
