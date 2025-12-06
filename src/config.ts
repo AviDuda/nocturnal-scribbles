@@ -50,7 +50,6 @@ export const WATCH_DIRS = [
 	"templates",
 	"static",
 	"public",
-	"scripts",
 	"src",
 ];
 

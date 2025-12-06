@@ -10,11 +10,13 @@ import {
 	copyPublicFiles,
 	copyStaticWithHashing,
 } from "./assets";
+import { bundleGeocities, transpileScripts } from "./bundler";
 import {
 	DIST_DIR,
 	PAGES_DIR,
 	POSTS_DIR,
 	PUBLIC_DIR,
+	ROOT_DIR,
 	STATIC_DIR,
 	TEMPLATES_DIR,
 } from "./config";
@@ -53,6 +55,10 @@ export async function build(options: BuildOptions = {}) {
 
 	console.log("Building site...");
 
+	// Transpile TypeScript scripts for inline inclusion
+	await transpileScripts(ROOT_DIR);
+	console.log("Transpiled scripts");
+
 	// Clean dist directory
 	if (existsSync(distDir)) {
 		rmSync(distDir, { recursive: true });
@@ -64,6 +70,11 @@ export async function build(options: BuildOptions = {}) {
 	mkdirSync(staticDistDir, { recursive: true });
 	const assetMap = await copyStaticWithHashing(staticDir, staticDistDir);
 	console.log("Copied and hashed static assets");
+
+	// Bundle geocities theme (lazy-loaded)
+	const geocitiesBundle = await bundleGeocities(staticDistDir);
+	assetMap[geocitiesBundle.originalPath] = geocitiesBundle.hashedPath;
+	console.log("Bundled geocities theme");
 
 	// Copy public files to dist root (CNAME, robots.txt, etc.)
 	if (existsSync(publicDir)) {

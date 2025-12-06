@@ -1,9 +1,9 @@
-(() => {
-	const refs = document.querySelectorAll("[data-tooltip]");
+const tooltip = () => {
+	const refs = document.querySelectorAll<HTMLElement>("[data-tooltip]");
 	if (!refs.length) return;
 
-	let tooltip = null;
-	let hideTimeout = null;
+	let tooltip: HTMLDivElement | null = null;
+	let hideTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	function cancelHide() {
 		if (hideTimeout) {
@@ -24,7 +24,7 @@
 		hideTimeout = setTimeout(hide, 100);
 	}
 
-	function show(ref) {
+	function show(ref: HTMLElement) {
 		cancelHide();
 		if (tooltip) tooltip.remove();
 
@@ -33,7 +33,7 @@
 		tooltip = document.createElement("div");
 		tooltip.className = "tooltip";
 		if (tooltipWidth) tooltip.style.maxWidth = tooltipWidth;
-		tooltip.innerHTML = content;
+		tooltip.innerHTML = content ?? "";
 		document.body.appendChild(tooltip);
 
 		tooltip.addEventListener("mouseenter", cancelHide);
@@ -70,4 +70,6 @@
 		ref.addEventListener("focus", () => show(ref));
 		ref.addEventListener("blur", hide);
 	});
-})();
+};
+
+tooltip();
