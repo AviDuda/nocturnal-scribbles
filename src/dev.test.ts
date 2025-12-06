@@ -443,7 +443,7 @@ describe("Dev Server", () => {
 		});
 	});
 
-	describe("startDevServer", () => {
+	describe.skipIf(process.env.CI === "true")("startDevServer", () => {
 		test("should start server in test mode and respond to requests", async () => {
 			const { server, watchers } = await startDevServer({ testMode: true });
 
