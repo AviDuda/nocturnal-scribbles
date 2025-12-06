@@ -1382,6 +1382,11 @@ export function addMusicPlayer(
 		updateDisplay();
 	});
 
+	// Update UI when audio is interrupted (iOS backgrounding, etc.)
+	musicEvents.on("interrupted", () => {
+		updateDisplay();
+	});
+
 	// Generate initial track
 	musicGen.generate();
 	updateDisplay();

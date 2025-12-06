@@ -25,7 +25,8 @@ This document explains the technical architecture of the Geocities Music Player.
 12. [Dusty Archives Effect](#dusty-archives-effect)
 13. [Radio: DJs, Jingles & Commercials](#radio-djs-jingles--commercials)
 14. [Export: WAV & MIDI](#export-wav--midi)
-15. [File Reference](#file-reference)
+15. [Background Playback](#background-playback)
+16. [File Reference](#file-reference)
 
 ---
 
@@ -668,6 +669,54 @@ This ensures WAV exports include all synthesis features:
 Example: `midnight_neon_drive_A_[synthwave_build-drop].wav`
 
 The suffix makes it easy to sort/filter exports by genre or structure type.
+
+---
+
+## Background Playback
+
+### ELI5
+
+When you switch apps or lock your phone, the robot DJ gets put in time-out. Browsers freeze JavaScript to save battery. The robot pre-schedules 15 seconds of music so you get a bit of runway, but eventually the music stops. iOS is the strictest - it freezes the robot almost instantly. Desktop browsers are more chill about it.
+
+### Technical
+
+Browsers throttle or suspend JavaScript in background tabs to save resources. This affects the Web Audio scheduler.
+
+**Browser Behavior:**
+
+| Platform | Background Handling |
+|----------|-------------------|
+| iOS Safari | Suspends AudioContext almost immediately |
+| Android Chrome | Throttles timers, less aggressive |
+| Desktop browsers | Throttles to ~1 timer/second, more aggressive after 5+ minutes |
+
+**Current Mitigations:**
+- 15-second look-ahead scheduling (pre-schedule notes before suspension)
+- MediaStream routing through `<audio>` element (helps maintain audio session)
+- Media Session API for lock screen controls
+- Screen Wake Lock API prevents auto-dimming on mobile (iOS 18.4+, requires HTTPS)
+- Listens for `AudioContext.state === "interrupted"` to pause gracefully (no stuck notes)
+- Player UI updates to show play button when interrupted
+
+**Why iOS is Stubborn:**
+
+iOS suspends the entire `AudioContext`, not just the scheduler. Pre-scheduled oscillators stop producing audio. The `<audio>` element keeps the audio session alive, but the AudioContext generating the audio is frozen.
+
+**Why AudioWorklet Wouldn't Help:**
+
+You might think "just use AudioWorklet to generate samples in a worker thread!" Nope. iOS suspends the entire `AudioContext`, worklets included. There's no escape hatch here - Apple really doesn't want web audio running in the background.
+
+**TL;DR:**
+
+~15 seconds of background playback on most platforms, less on iOS. When it stops, hit play again. Keep the tab in foreground for uninterrupted vibes.
+
+**Further Reading:**
+- [WebKit Bug 273511: AudioContext stuck on Interrupted](https://bugs.webkit.org/show_bug.cgi?id=273511) - open issue, iOS 17+
+- [WebKit Bug 263627: AudioContext not consistently resumed on foreground](https://bugs.webkit.org/show_bug.cgi?id=263627) - state says "running" but `currentTime` stops
+- [iOS 26 Audio issues in PWA web apps (MacRumors)](https://forums.macrumors.com/threads/ios-26-audio-issues-in-pwa-web-apps.2466839/) - AudioContext crashes, requires phone restart
+- [iOS Audio Lockscreen Problem in PWA (Apple Developer Forums)](https://developer.apple.com/forums/thread/762582)
+- [iOS PWA Background Audio (Stack Overflow)](https://stackoverflow.com/questions/60003027/ios-pwa-background-audio-support) - `minimal-ui` workaround (unreliable, iOS keeps changing behavior)
+- [PR #2611: "interrupted" state added to spec](https://github.com/WebAudio/web-audio-api/pull/2611) - merged March 2025
 
 ---
 

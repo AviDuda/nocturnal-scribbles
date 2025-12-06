@@ -14,7 +14,8 @@ export type MusicEvent =
 	| { type: "itemStarted"; item: PlayableItem }
 	| { type: "queueUpdated"; queue: PlayableItem[] }
 	| { type: "breakStarted"; item: PlayableItem }
-	| { type: "breakEnded"; item: PlayableItem; skipped: boolean };
+	| { type: "breakEnded"; item: PlayableItem; skipped: boolean }
+	| { type: "interrupted" };
 
 type Listener<T> = (event: T) => void;
 

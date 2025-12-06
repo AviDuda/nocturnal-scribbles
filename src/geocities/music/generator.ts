@@ -32,6 +32,7 @@ import {
 } from "./mixer";
 import { getPostAgeEffect } from "./mood";
 import { generatePattern } from "./patterns";
+import { getCurrentStation } from "./radio";
 import { getTotalBars, structures } from "./structures";
 import {
 	createSynthContext,
@@ -79,6 +80,10 @@ let vinylCrackleGain: GainNode | null = null;
 let bitcrusherNode: WaveShaperNode | null = null;
 let bitcrusherMix: GainNode | null = null;
 let cleanMix: GainNode | null = null;
+// Background audio support (browsers throttle/suspend JS in background tabs)
+let mediaStreamDest: MediaStreamAudioDestinationNode | null = null;
+let backgroundAudioElement: HTMLAudioElement | null = null;
+let wakeLock: WakeLockSentinel | null = null;
 let isPlaying = false;
 let schedulerTimer: ReturnType<typeof setInterval> | null = null;
 let pageEmojis: string[] = [];
@@ -93,6 +98,8 @@ musicEvents.on("transitionComplete", () => {
 	const song = getCurrentSong();
 	if (song) {
 		prepareNextItem(song.tempo);
+		// Update Media Session with new track info
+		updateMediaSession();
 	}
 });
 
@@ -104,10 +111,15 @@ musicEvents.on("transitionComplete", () => {
 type DeckPlayback = {
 	song: Song | null;
 	synthContext: SynthContext | null;
+	/** Scheduled section index (may be ahead of playback) */
 	sectionIndex: number;
+	/** Scheduled step within section (may be ahead of playback) */
 	sectionStep: number;
 	nextNoteTime: number;
-	songEndingEmitted: boolean;
+	/** When playback started (ctx.currentTime) - for calculating actual position */
+	playbackStartTime: number;
+	/** Has the transition been triggered for this deck (based on playback time)? */
+	transitionTriggered: boolean;
 };
 
 function createEmptyDeckPlayback(): DeckPlayback {
@@ -117,7 +129,8 @@ function createEmptyDeckPlayback(): DeckPlayback {
 		sectionIndex: 0,
 		sectionStep: 0,
 		nextNoteTime: 0,
-		songEndingEmitted: false,
+		playbackStartTime: 0,
+		transitionTriggered: false,
 	};
 }
 
@@ -151,9 +164,10 @@ function initIncomingDeck(song: Song, startDelay = 0): void {
 	deck.synthContext = createDeckSynthContext(inactiveId, song);
 	deck.sectionIndex = 0;
 	deck.sectionStep = 0;
-	deck.songEndingEmitted = false;
+	deck.transitionTriggered = false;
 	if (ctx) {
 		deck.nextNoteTime = ctx.currentTime + startDelay;
+		deck.playbackStartTime = ctx.currentTime + startDelay;
 	}
 }
 
@@ -179,6 +193,39 @@ const trackMutes = {
 /** Pick a random value within a [min, max] range */
 function pickFromRange(range: [number, number]): number {
 	return range[0] + Math.random() * (range[1] - range[0]);
+}
+
+/** Check if we're on a mobile/touch device */
+function isMobileDevice(): boolean {
+	return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+}
+
+/** Request wake lock to prevent screen from dimming (mobile only) */
+async function requestWakeLock(): Promise<void> {
+	if (!isMobileDevice() || !("wakeLock" in navigator)) return;
+	try {
+		wakeLock = await navigator.wakeLock.request("screen");
+		wakeLock.addEventListener("release", () => {
+			wakeLock = null;
+		});
+	} catch {
+		// Wake lock request failed (e.g., low battery, not visible)
+	}
+}
+
+// Re-request wake lock when page becomes visible again (lock is released on visibility change)
+document.addEventListener("visibilitychange", () => {
+	if (document.visibilityState === "visible" && isPlaying) {
+		requestWakeLock();
+	}
+});
+
+/** Release wake lock */
+function releaseWakeLock(): void {
+	if (wakeLock) {
+		wakeLock.release();
+		wakeLock = null;
+	}
 }
 
 function getContext() {
@@ -263,6 +310,15 @@ function getContext() {
 		effectsGain.connect(analyser);
 		analyser.connect(ctx.destination);
 
+		// Background audio support
+		// Route audio through a MediaStream → <audio> element to help maintain playback
+		// when browser throttles/suspends JS in background tabs
+		mediaStreamDest = ctx.createMediaStreamDestination();
+		analyser.connect(mediaStreamDest);
+		backgroundAudioElement = document.createElement("audio");
+		backgroundAudioElement.srcObject = mediaStreamDest.stream;
+		backgroundAudioElement.setAttribute("playsinline", "true");
+
 		// Vinyl noise chain (separate from main music)
 		vinylNoiseGain = ctx.createGain();
 		vinylNoiseGain.gain.value = 0; // Off by default
@@ -273,6 +329,16 @@ function getContext() {
 
 		// Initialize mixer for automix transitions
 		initMixer(ctx, masterGain);
+
+		// Handle audio interruption (iOS backgrounding, phone calls, etc.)
+		// Pause gracefully instead of getting stuck on a sustained note
+		// User must press play again to resume (iOS requires user interaction)
+		ctx.addEventListener("statechange", () => {
+			if (ctx?.state === "interrupted" && isPlaying) {
+				stop();
+				musicEvents.emit({ type: "interrupted" });
+			}
+		});
 	}
 	if (ctx.state === "suspended") {
 		ctx.resume();
@@ -325,11 +391,12 @@ function loadSongInternal(song: Song) {
 	deck.synthContext = createDeckSynthContext(deckId, song);
 	deck.sectionIndex = 0;
 	deck.sectionStep = 0;
-	deck.songEndingEmitted = false;
+	deck.transitionTriggered = false;
 
 	// Reset timing to start from now
 	if (ctx) {
 		deck.nextNoteTime = ctx.currentTime;
+		deck.playbackStartTime = ctx.currentTime;
 	}
 
 	// Apply new song's effects
@@ -948,6 +1015,192 @@ function updateVinylNoise() {
 	vinylCrackleGain.gain.linearRampToValueAtTime(crackleLevel, now + 0.5);
 }
 
+// ============================================
+// Media Session API (lock screen controls)
+// ============================================
+
+let mediaSessionInitialized = false;
+
+/** Update Media Session metadata for lock screen display */
+function updateMediaSession() {
+	if (!("mediaSession" in navigator)) return;
+
+	const currentSong = getCurrentSong();
+	if (!currentSong) return;
+
+	// Build artist/album based on mode
+	let artist: string;
+	let album: string;
+
+	if (playerMode === "radio") {
+		const station = getCurrentStation();
+		artist = station.name;
+		album = currentSong.genre.name;
+	} else {
+		artist = `Mixtape Side ${tapeSide}`;
+		album = `${currentSong.genre.name} - Nocturnal Scribbles`;
+	}
+
+	// Set metadata
+	navigator.mediaSession.metadata = new MediaMetadata({
+		title: currentSong.trackName,
+		artist,
+		album,
+	});
+
+	// Set up action handlers (only once)
+	if (!mediaSessionInitialized) {
+		navigator.mediaSession.setActionHandler("play", () => {
+			play();
+		});
+		navigator.mediaSession.setActionHandler("pause", () => {
+			stop();
+		});
+		navigator.mediaSession.setActionHandler("nexttrack", () => {
+			nextTrack();
+		});
+		// No previoustrack - procedural generation means no going back
+		mediaSessionInitialized = true;
+	}
+
+	// Update playback state
+	navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+}
+
+// ============================================
+// Playback-based transition checks
+// ============================================
+
+/**
+ * Check for transitions based on actual playback time (not scheduled time).
+ * This ensures automix triggers at the right moment even with large lookahead.
+ */
+function checkPlaybackTransitions(): void {
+	if (!ctx || !isPlaying) return;
+
+	const deck = getActiveDeckPlayback();
+	const song = deck.song;
+	if (!song || loopEnabled) return;
+
+	// Calculate actual playback position
+	const playbackTime = ctx.currentTime - deck.playbackStartTime;
+	const secondsPerBar = (60 / song.tempo) * 4;
+	const totalDuration = song.totalBars * secondsPerBar;
+	const playbackBarsRemaining = (totalDuration - playbackTime) / secondsPerBar;
+
+	const transitionBars = getAutomixSettings().transitionBars;
+
+	// Check if we should START the transition (based on playback time)
+	if (
+		!deck.transitionTriggered &&
+		playbackBarsRemaining <= transitionBars &&
+		playbackBarsRemaining > 0
+	) {
+		deck.transitionTriggered = true;
+
+		musicEvents.emit({
+			type: "songEnding",
+			song: song,
+			barsRemaining: Math.ceil(playbackBarsRemaining),
+			beatTime: ctx.currentTime,
+		});
+
+		// Queue next song if needed
+		if (isAutomixEnabled() && !peekNext()) {
+			const visualState = sampleVisualState();
+			const nextSong = generateSong(visualState, song.tempo);
+
+			const breakItem = shouldTriggerBreak(playerMode);
+			if (breakItem) {
+				queueItem(breakItem);
+			}
+			queueItem({ kind: "song", song: nextSong });
+		}
+
+		// Start transition and initialize incoming deck
+		const nextItem = peekNext();
+		if (isAutomixEnabled() && nextItem?.kind === "song" && !isInTransition()) {
+			startTransition(nextItem, false, Math.ceil(playbackBarsRemaining));
+			const incomingDelay = getIncomingStartDelay();
+			initIncomingDeck(nextItem.song, incomingDelay);
+		}
+	}
+
+	// Check if song has ENDED (based on playback time)
+	if (playbackTime >= totalDuration) {
+		handleSongEnded(song);
+	}
+}
+
+/**
+ * Handle song end - finish transition, apply effects, load next song.
+ */
+function handleSongEnded(song: Song): void {
+	musicEvents.emit({ type: "songEnded", song: song });
+
+	const nextItem = peekNext();
+	if (isInTransition() && nextItem) {
+		finishTransition();
+		dequeueNext();
+		// The incoming deck is now active
+		const newDeck = getActiveDeckPlayback();
+		if (newDeck.song) {
+			if (delayNode && delayFeedback) {
+				delayNode.delayTime.value = 60 / newDeck.song.tempo / 2;
+				delayFeedback.gain.value = newDeck.song.delayAmount;
+			}
+			if (filterNode) {
+				filterNode.frequency.value = newDeck.song.filterCutoff;
+			}
+			updateVinylNoise();
+			updateBitcrusher();
+			prepareNextItem(newDeck.song.tempo);
+		}
+	} else if (isAutomixEnabled() && nextItem) {
+		startTransition(nextItem, true);
+		finishTransition();
+		dequeueNext();
+		if (nextItem.kind === "song") {
+			loadSongInternal(nextItem.song);
+		} else {
+			playBreak(nextItem).then(() => {
+				const songItem = peekNext();
+				if (songItem?.kind === "song") {
+					dequeueNext();
+					loadSongInternal(songItem.song);
+				} else {
+					const visualState = sampleVisualState();
+					loadSongInternal(generateSong(visualState));
+				}
+			});
+		}
+	} else {
+		// Use pre-queued items if available
+		const queuedItem = peekNext();
+		if (queuedItem) {
+			dequeueNext();
+			if (queuedItem.kind === "song") {
+				loadSongInternal(queuedItem.song);
+			} else {
+				playBreak(queuedItem).then(() => {
+					const songItem = peekNext();
+					if (songItem?.kind === "song") {
+						dequeueNext();
+						loadSongInternal(songItem.song);
+					} else {
+						const visualState = sampleVisualState();
+						loadSongInternal(generateSong(visualState));
+					}
+				});
+			}
+		} else {
+			// Fallback: generate on the fly
+			const visualState = sampleVisualState();
+			loadSongInternal(generateSong(visualState));
+		}
+	}
+}
+
 /** Get section and pattern for a specific deck */
 function getSectionForDeck(
 	deck: DeckPlayback,
@@ -979,16 +1232,20 @@ function scheduleNotesForDeck(deckId: DeckId, isOutgoing: boolean): boolean {
 	const synth = deck.synthContext;
 	if (!song || !synth) return false;
 
-	const current = getSectionForDeck(deck);
-	if (!current) return false;
-
 	const c = getContext();
 	const secondsPerStep = 60 / song.tempo / 4;
-	const scheduleAhead = 0.1;
+	// Schedule 15 seconds ahead to support background playback
+	// Browsers throttle/suspend JS in background tabs, but pre-scheduled
+	// Web Audio nodes continue playing
+	const scheduleAhead = 15;
 
 	let scheduled = false;
 
 	while (deck.nextNoteTime < c.currentTime + scheduleAhead) {
+		// Fetch current section inside loop - it may change as we schedule ahead
+		const current = getSectionForDeck(deck);
+		if (!current) break;
+
 		scheduled = true;
 		const { section, pattern } = current;
 		const sectionSteps = section.bars * STEPS_PER_BAR;
@@ -1099,125 +1356,17 @@ function scheduleNotesForDeck(deckId: DeckId, isOutgoing: boolean): boolean {
 		deck.nextNoteTime += secondsPerStep;
 		deck.sectionStep++;
 
-		// Only check for song ending on outgoing deck (active deck)
-		if (isOutgoing && !deck.songEndingEmitted && !loopEnabled) {
-			const barsRemaining = calculateBarsRemainingForDeck(deck);
-			const transitionBars = getAutomixSettings().transitionBars;
-			if (barsRemaining <= transitionBars && barsRemaining > 0) {
-				deck.songEndingEmitted = true;
-				musicEvents.emit({
-					type: "songEnding",
-					song: song,
-					barsRemaining,
-					beatTime: deck.nextNoteTime,
-				});
-
-				// Queue next song if needed
-				if (isAutomixEnabled() && !peekNext()) {
-					const visualState = sampleVisualState();
-					const nextSong = generateSong(visualState, song.tempo);
-
-					const breakItem = shouldTriggerBreak(playerMode);
-					if (breakItem) {
-						queueItem(breakItem);
-					}
-					queueItem({ kind: "song", song: nextSong });
-				}
-
-				// Start transition and initialize incoming deck
-				// Only start transitions to songs, not breaks (breaks play after song ends)
-				const nextItem = peekNext();
-				if (
-					isAutomixEnabled() &&
-					nextItem?.kind === "song" &&
-					!isInTransition()
-				) {
-					startTransition(nextItem, false, barsRemaining);
-					// Get delay for incoming deck (e.g., echo keeps incoming silent initially)
-					const incomingDelay = getIncomingStartDelay();
-					initIncomingDeck(nextItem.song, incomingDelay);
-				}
-			}
-		}
-
 		// Check if we've finished this section
 		if (deck.sectionStep >= sectionSteps) {
 			deck.sectionStep = 0;
 			deck.sectionIndex++;
 
-			// Check for song end
+			// Check for song end (for scheduling purposes)
 			if (deck.sectionIndex >= song.structure.sections.length) {
-				if (loopEnabled && isOutgoing) {
+				if (loopEnabled) {
 					deck.sectionIndex = 0;
-				} else if (isOutgoing) {
-					// Outgoing song ended - finish transition
-					musicEvents.emit({ type: "songEnded", song: song });
-
-					const nextItem = peekNext();
-					if (isInTransition() && nextItem) {
-						finishTransition();
-						dequeueNext();
-						// The incoming deck is now active and already has its song loaded
-						// Apply effects for the new song
-						const newDeck = getActiveDeckPlayback();
-						if (newDeck.song) {
-							// synthContext already set in initIncomingDeck
-							if (delayNode && delayFeedback) {
-								delayNode.delayTime.value = 60 / newDeck.song.tempo / 2;
-								delayFeedback.gain.value = newDeck.song.delayAmount;
-							}
-							if (filterNode) {
-								filterNode.frequency.value = newDeck.song.filterCutoff;
-							}
-							updateVinylNoise();
-							updateBitcrusher();
-							prepareNextItem(newDeck.song.tempo);
-						}
-					} else if (isAutomixEnabled() && nextItem) {
-						startTransition(nextItem, true);
-						finishTransition();
-						dequeueNext();
-						if (nextItem.kind === "song") {
-							loadSongInternal(nextItem.song);
-						} else {
-							playBreak(nextItem).then(() => {
-								const songItem = peekNext();
-								if (songItem?.kind === "song") {
-									dequeueNext();
-									loadSongInternal(songItem.song);
-								} else {
-									const visualState = sampleVisualState();
-									loadSongInternal(generateSong(visualState));
-								}
-							});
-						}
-					} else {
-						// Use pre-queued items if available
-						const nextItem = peekNext();
-						if (nextItem) {
-							dequeueNext();
-							if (nextItem.kind === "song") {
-								loadSongInternal(nextItem.song);
-							} else {
-								playBreak(nextItem).then(() => {
-									const songItem = peekNext();
-									if (songItem?.kind === "song") {
-										dequeueNext();
-										loadSongInternal(songItem.song);
-									} else {
-										const visualState = sampleVisualState();
-										loadSongInternal(generateSong(visualState));
-									}
-								});
-							}
-						} else {
-							// Fallback: generate on the fly (e.g., loop was just disabled)
-							const visualState = sampleVisualState();
-							loadSongInternal(generateSong(visualState));
-						}
-					}
-					return false; // Song ended
 				}
+				// Actual song end handling is done by checkPlaybackTransitions()
 			}
 
 			// Announce section change (only for active deck)
@@ -1238,29 +1387,6 @@ function scheduleNotesForDeck(deckId: DeckId, isOutgoing: boolean): boolean {
 	}
 
 	return scheduled;
-}
-
-/** Calculate bars remaining for a specific deck */
-function calculateBarsRemainingForDeck(deck: DeckPlayback): number {
-	const song = deck.song;
-	if (!song) return 0;
-	const sections = song.structure.sections;
-	let barsRemaining = 0;
-
-	for (let i = deck.sectionIndex; i < sections.length; i++) {
-		const s = sections[i];
-		if (s) {
-			if (i === deck.sectionIndex) {
-				const sectionBars = s.bars;
-				const currentBar = Math.floor(deck.sectionStep / STEPS_PER_BAR);
-				barsRemaining += sectionBars - currentBar;
-			} else {
-				barsRemaining += s.bars;
-			}
-		}
-	}
-
-	return barsRemaining;
 }
 
 // Schedule notes for the next chunk
@@ -1286,6 +1412,7 @@ function scheduleNotes() {
 function scheduler() {
 	if (!isPlaying) return;
 	scheduleNotes();
+	checkPlaybackTransitions();
 	schedulerTimer = setTimeout(scheduler, 25);
 }
 
@@ -1336,7 +1463,7 @@ export function generate() {
 	// synthContext is created lazily in play() after mixer is initialized
 	deck.sectionIndex = 0;
 	deck.sectionStep = 0;
-	deck.songEndingEmitted = false;
+	deck.transitionTriggered = false;
 
 	// Prepare what's coming next (for "Next up" display)
 	prepareNextItem(song.tempo);
@@ -1397,7 +1524,7 @@ export function nextTrack() {
 
 	deck.sectionIndex = 0;
 	deck.sectionStep = 0;
-	deck.songEndingEmitted = false;
+	deck.transitionTriggered = false;
 
 	// Apply new song's effects
 	if (deck.song && delayNode && delayFeedback) {
@@ -1436,6 +1563,12 @@ function clearDelayBuffer() {
 
 export function play() {
 	if (isPlaying) return;
+
+	// Handle iOS interrupted state - must resume in user interaction call stack
+	if (ctx?.state === "interrupted" || ctx?.state === "suspended") {
+		ctx.resume();
+	}
+
 	const deck = getActiveDeckPlayback();
 	if (!deck.song) generate();
 	const c = getContext(); // Initializes mixer
@@ -1459,6 +1592,7 @@ export function play() {
 
 	isPlaying = true;
 	deck.nextNoteTime = c.currentTime + 0.1;
+	deck.playbackStartTime = c.currentTime;
 
 	// Initialize mixer deck for playback (ensures active deck gain = 1)
 	startPlayback();
@@ -1487,6 +1621,19 @@ export function play() {
 	// Apply bitcrusher for chiptune/midi
 	updateBitcrusher();
 
+	// Start background audio element to help maintain playback in background tabs
+	if (backgroundAudioElement) {
+		backgroundAudioElement.play().catch(() => {
+			// Ignore autoplay errors - user interaction already happened
+		});
+	}
+
+	// Update Media Session metadata for lock screen controls
+	updateMediaSession();
+
+	// Prevent screen from dimming on mobile
+	requestWakeLock();
+
 	scheduler();
 }
 
@@ -1512,6 +1659,12 @@ export function stop(fadeOut = false) {
 			clearTimeout(schedulerTimer);
 			schedulerTimer = null;
 		}
+		// Pause background audio element
+		if (backgroundAudioElement) {
+			backgroundAudioElement.pause();
+		}
+		// Allow screen to dim again
+		releaseWakeLock();
 		// Only reset deck and mixer state on full stop, not on pause
 		if (fullReset) {
 			stopMixer();
@@ -1628,15 +1781,10 @@ export function getDuration() {
 export function getPosition() {
 	const deck = getActiveDeckPlayback();
 	const currentSong = deck.song;
-	if (!currentSong) return 0;
-	const secondsPerStep = 60 / currentSong.tempo / 4;
-	// Calculate total steps played so far
-	let stepsToSection = 0;
-	for (let i = 0; i < deck.sectionIndex; i++) {
-		const section = currentSong.structure.sections[i];
-		if (section) stepsToSection += section.bars * STEPS_PER_BAR;
-	}
-	return (stepsToSection + deck.sectionStep) * secondsPerStep;
+	if (!currentSong || !ctx) return 0;
+	// Use actual playback time, not scheduled position
+	// This correctly shows position even when scheduler is far ahead
+	return Math.max(0, ctx.currentTime - deck.playbackStartTime);
 }
 
 export function seek(time: number) {
@@ -1672,9 +1820,8 @@ export function seek(time: number) {
 		}
 	}
 
-	// Reset songEndingEmitted so the ending check can trigger again
-	// This ensures breaks can be scheduled even when seeking near end
-	deck.songEndingEmitted = false;
+	// Reset transitionTriggered so the ending check can trigger again
+	deck.transitionTriggered = false;
 
 	clearDelayBuffer();
 	if (isPlaying && ctx) {
@@ -1695,18 +1842,45 @@ export function getSong() {
 	return getCurrentSong();
 }
 
+/** Calculate current section index based on actual playback time */
+function getPlaybackSectionIndex(deck: DeckPlayback, song: Song): number {
+	if (!ctx) return 0;
+
+	const playbackTime = Math.max(0, ctx.currentTime - deck.playbackStartTime);
+	const secondsPerBar = (60 / song.tempo) * 4;
+
+	let barsAccum = 0;
+	for (let i = 0; i < song.structure.sections.length; i++) {
+		const section = song.structure.sections[i];
+		if (!section) continue;
+		const sectionEnd = (barsAccum + section.bars) * secondsPerBar;
+		if (playbackTime < sectionEnd) {
+			return i;
+		}
+		barsAccum += section.bars;
+	}
+
+	// Past the end, return last section
+	return Math.max(0, song.structure.sections.length - 1);
+}
+
 export function getCurrentSectionInfo(): SectionState | null {
 	const deck = getActiveDeckPlayback();
 	const currentSong = deck.song;
 	if (!currentSong) return null;
-	const section = currentSong.structure.sections[deck.sectionIndex];
+
+	// Use playback-based section index, not scheduled index
+	const sectionIndex = isPlaying
+		? getPlaybackSectionIndex(deck, currentSong)
+		: deck.sectionIndex;
+	const section = currentSong.structure.sections[sectionIndex];
 	if (!section) return null;
 
 	const pattern = currentSong.patterns.get(section.type);
 
 	return {
 		type: section.type,
-		index: deck.sectionIndex,
+		index: sectionIndex,
 		melodyPattern: pattern?.melodyPattern ?? null,
 		rhythmVariation: pattern?.rhythmVariation ?? "normal",
 		drumPattern: pattern?.drumPattern ?? null,
