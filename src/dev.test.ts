@@ -443,7 +443,9 @@ describe("Dev Server", () => {
 		});
 	});
 
-	describe.skipIf(process.env.CI !== undefined || process.env.GITHUB_ACTIONS !== undefined)("startDevServer", () => {
+	describe.skipIf(
+		process.env.CI !== undefined || process.env.GITHUB_ACTIONS !== undefined,
+	)("startDevServer", () => {
 		test("should start server in test mode and respond to requests", async () => {
 			const { server, watchers } = await startDevServer({ testMode: true });
 
