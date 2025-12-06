@@ -730,26 +730,33 @@ function generateSong(visualState: VisualState, targetTempo?: number): Song {
 	const swing = pickFromRange(genre.swingRange);
 
 	// Generate patterns for each unique section type
+	// Use the MAXIMUM bar count for each type to ensure patterns cover all instances
 	const patterns = new Map<Section["type"], Pattern>();
-	const seenTypes = new Set<Section["type"]>();
+	const maxBarsPerType = new Map<Section["type"], Section>();
 
+	// First pass: find the section with max bars for each type
 	for (const section of structure.sections) {
-		if (!seenTypes.has(section.type)) {
-			seenTypes.add(section.type);
-			patterns.set(
-				section.type,
-				generatePattern({
-					section,
-					genre,
-					scale,
-					rootNote,
-					progression,
-					tempo,
-					delayAmount,
-					filterCutoff,
-				}),
-			);
+		const existing = maxBarsPerType.get(section.type);
+		if (!existing || section.bars > existing.bars) {
+			maxBarsPerType.set(section.type, section);
 		}
+	}
+
+	// Second pass: generate patterns using the max-bar section for each type
+	for (const section of maxBarsPerType.values()) {
+		patterns.set(
+			section.type,
+			generatePattern({
+				section,
+				genre,
+				scale,
+				rootNote,
+				progression,
+				tempo,
+				delayAmount,
+				filterCutoff,
+			}),
+		);
 	}
 
 	return {
