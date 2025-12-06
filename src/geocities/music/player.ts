@@ -1,3 +1,4 @@
+import { getCurrentBreak, isBreakPlaying } from "./breaks";
 import { musicEvents } from "./events";
 import * as musicGen from "./generator";
 import { getNextUp } from "./generator";
@@ -638,6 +639,82 @@ export function addMusicPlayer(
 	}
 
 	function updateDisplay() {
+		// Always update play button
+		if (playBtn) {
+			playBtn.textContent = musicGen.getIsPlaying() ? "❚❚" : "▶";
+			playBtn.classList.toggle("playing", musicGen.getIsPlaying());
+		}
+		// Always update next up display
+		if (nextUpEl) {
+			const nextUp = getNextUp();
+			if (nextUp) {
+				const text = nextUp.sublabel
+					? `${nextUp.label} (${nextUp.sublabel})`
+					: nextUp.label;
+				nextUpEl.textContent = text;
+				nextUpEl.title = text;
+			} else {
+				nextUpEl.textContent = musicGen.getLoopEnabled() ? "[loop]" : "--";
+				nextUpEl.title = "";
+			}
+		}
+
+		// Show break info when a break is playing
+		if (isBreakPlaying()) {
+			const breakItem = getCurrentBreak();
+			if (breakItem) {
+				let breakName = "";
+				let breakType = "";
+				switch (breakItem.kind) {
+					case "djAnnouncement":
+						breakName = "DJ Announcement";
+						breakType = `${breakItem.announcement.segments.length} segments`;
+						break;
+					case "adBreak":
+						breakName = "Ad Break";
+						breakType = `${breakItem.adBreak.commercials.length} commercials`;
+						break;
+					case "silence":
+						breakName = "Silence";
+						breakType = `${breakItem.duration / 1000}s`;
+						break;
+					case "jingle":
+						breakName = "Jingle";
+						breakType = breakItem.stationId;
+						break;
+					case "news":
+						breakName = "News";
+						breakType = `${breakItem.segments.length} segments`;
+						break;
+					case "commercial":
+						breakName = "Commercial";
+						breakType = breakItem.id;
+						break;
+					default:
+						breakName = "Break";
+						breakType = "";
+				}
+				if (trackNameEl) trackNameEl.textContent = breakName;
+				if (keyEl) keyEl.textContent = breakType;
+				if (scaleEl) scaleEl.textContent = "";
+				if (tempoEl) tempoEl.textContent = "";
+				if (genreEl) genreEl.textContent = "";
+				if (structureEl) structureEl.textContent = "";
+				if (sectionEl) sectionEl.textContent = "";
+				if (progressionEl) progressionEl.textContent = "";
+				if (transitionsEl) transitionsEl.textContent = "";
+				// Clear info panel
+				if (drumPatternEl) drumPatternEl.textContent = "";
+				if (bassPatternEl) bassPatternEl.textContent = "";
+				if (melodyPatternEl) melodyPatternEl.textContent = "";
+				if (arpPatternEl) arpPatternEl.textContent = "";
+				if (rhythmVariationEl) rhythmVariationEl.textContent = "";
+				if (energyEl) energyEl.textContent = "";
+				if (activeTracksEl) activeTracksEl.textContent = "";
+			}
+			return;
+		}
+
 		const pattern = musicGen.getPattern();
 		const song = musicGen.getSong();
 		if (pattern) {
@@ -674,27 +751,12 @@ export function addMusicPlayer(
 				}
 			}
 		}
-		if (playBtn) {
-			playBtn.textContent = musicGen.getIsPlaying() ? "❚❚" : "▶";
-			playBtn.classList.toggle("playing", musicGen.getIsPlaying());
-		}
-		// Update next up display
-		if (nextUpEl) {
-			const nextUp = getNextUp();
-			if (nextUp) {
-				const text = nextUp.sublabel
-					? `${nextUp.label} (${nextUp.sublabel})`
-					: nextUp.label;
-				nextUpEl.textContent = text;
-				nextUpEl.title = text;
-			} else {
-				nextUpEl.textContent = musicGen.getLoopEnabled() ? "[loop]" : "--";
-				nextUpEl.title = "";
-			}
-		}
 	}
 
 	function updateSectionDisplay() {
+		// Don't update section info during breaks
+		if (isBreakPlaying()) return;
+
 		const sectionInfo = musicGen.getCurrentSectionInfo();
 		if (!sectionInfo) return;
 
@@ -1160,6 +1222,7 @@ export function addMusicPlayer(
 			playPause();
 		} else if (action === "stop") {
 			musicGen.stop();
+			musicGen.seek(0);
 			updateDisplay();
 		} else if (action === "next" || action === "prev") {
 			nextTrack();

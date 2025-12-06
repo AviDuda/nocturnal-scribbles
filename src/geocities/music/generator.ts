@@ -15,6 +15,7 @@ import { musicEvents } from "./events";
 import { genres, selectGenre } from "./genres";
 import { announceSection, randomizeVoice, setLyricsPlayerMode } from "./lyrics";
 import {
+	cancelTransition,
 	dequeueNext,
 	finishTransition,
 	getActiveDeckId,
@@ -43,6 +44,7 @@ import {
 	playNote,
 	playPad,
 	type SynthContext,
+	stopAllScheduledNodes,
 } from "./synths";
 import { generateTrackName } from "./track-names";
 import type {
@@ -110,6 +112,45 @@ musicEvents.on("transitionComplete", () => {
 	}
 });
 
+// Silence music when a break starts (DJ announcements, ad breaks, etc.)
+// With 15-second lookahead scheduling, pre-scheduled audio would otherwise continue playing
+musicEvents.on("breakStarted", () => {
+	if (ctx && masterGain) {
+		// Save position so UI freezes during break
+		const deck = getActiveDeckPlayback();
+		if (deck.song) {
+			deck.pausedAtPosition = ctx.currentTime - deck.playbackStartTime;
+		}
+		const now = ctx.currentTime;
+		masterGain.gain.cancelScheduledValues(now);
+		masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+		masterGain.gain.linearRampToValueAtTime(0, now + 0.1);
+
+		// In radio mode, queue the next song so "Next Up" shows it during the break
+		if (playerMode === "radio" && !peekNext()) {
+			const visualState = sampleVisualState();
+			const nextSong = generateSong(visualState, deck.song?.tempo);
+			queueItem({ kind: "song", song: nextSong });
+		}
+	}
+});
+
+// Restore music volume when break ends
+musicEvents.on("breakEnded", () => {
+	if (ctx && masterGain && isPlaying) {
+		// Restore playbackStartTime so position continues from where break started
+		const deck = getActiveDeckPlayback();
+		if (deck.song && deck.pausedAtPosition > 0) {
+			deck.playbackStartTime = ctx.currentTime - deck.pausedAtPosition;
+			deck.pausedAtPosition = 0;
+		}
+		const now = ctx.currentTime;
+		masterGain.gain.cancelScheduledValues(now);
+		masterGain.gain.setValueAtTime(0, now);
+		masterGain.gain.linearRampToValueAtTime(1, now + 0.2);
+	}
+});
+
 // ============================================
 // Per-Deck Playback State
 // ============================================
@@ -127,6 +168,8 @@ type DeckPlayback = {
 	playbackStartTime: number;
 	/** Has the transition been triggered for this deck (based on playback time)? */
 	transitionTriggered: boolean;
+	/** Song position (in seconds) when paused, for resume */
+	pausedAtPosition: number;
 };
 
 function createEmptyDeckPlayback(): DeckPlayback {
@@ -138,6 +181,7 @@ function createEmptyDeckPlayback(): DeckPlayback {
 		nextNoteTime: 0,
 		playbackStartTime: 0,
 		transitionTriggered: false,
+		pausedAtPosition: 0,
 	};
 }
 
@@ -576,7 +620,9 @@ function prepareNextItem(currentTempo?: number) {
 	// Determine if we should have a break
 	const breakItem = shouldTriggerBreak(playerMode);
 	if (breakItem) {
+		// Only queue the break - song will be generated after break ends
 		queueItem(breakItem);
+		return;
 	}
 
 	// Generate and queue the next song
@@ -1807,7 +1853,14 @@ export function play() {
 
 	isPlaying = true;
 	deck.nextNoteTime = c.currentTime + 0.1;
-	deck.playbackStartTime = c.currentTime;
+
+	// Restore position if resuming from pause, otherwise start fresh
+	if (deck.pausedAtPosition > 0) {
+		deck.playbackStartTime = c.currentTime - deck.pausedAtPosition;
+		deck.pausedAtPosition = 0;
+	} else {
+		deck.playbackStartTime = c.currentTime;
+	}
 
 	// Initialize mixer deck for playback (ensures active deck gain = 1)
 	startPlayback();
@@ -1859,13 +1912,25 @@ export function play() {
 export function stop(fadeOut = false) {
 	if (!isPlaying) return;
 
+	// Stop all scheduled oscillators on both decks
+	if (deckPlayback.A.synthContext) {
+		stopAllScheduledNodes(deckPlayback.A.synthContext);
+	}
+	if (deckPlayback.B.synthContext) {
+		stopAllScheduledNodes(deckPlayback.B.synthContext);
+	}
+
 	if (fadeOut && ctx && masterGain) {
 		// Fade out for track transitions
 		masterGain.gain.cancelScheduledValues(ctx.currentTime);
 		masterGain.gain.setValueAtTime(masterGain.gain.value, ctx.currentTime);
 		masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + FADE_TIME);
 	} else if (ctx && masterGain) {
-		// Immediate stop (pause)
+		// Immediate stop (pause) - save position for resume
+		const deck = getActiveDeckPlayback();
+		if (deck.song) {
+			deck.pausedAtPosition = ctx.currentTime - deck.playbackStartTime;
+		}
 		masterGain.gain.cancelScheduledValues(ctx.currentTime);
 		masterGain.gain.setValueAtTime(0, ctx.currentTime);
 		clearDelayBuffer();
@@ -2001,6 +2066,10 @@ export function getPosition() {
 	const deck = getActiveDeckPlayback();
 	const currentSong = deck.song;
 	if (!currentSong || !ctx) return 0;
+	// When paused or during a break, return the saved position
+	if (!isPlaying || isBreakPlaying()) {
+		return deck.pausedAtPosition;
+	}
 	// Use actual playback time, not scheduled position
 	// This correctly shows position even when scheduler is far ahead
 	return Math.max(0, ctx.currentTime - deck.playbackStartTime);
@@ -2009,7 +2078,16 @@ export function getPosition() {
 export function seek(time: number) {
 	const deck = getActiveDeckPlayback();
 	const currentSong = deck.song;
-	if (!currentSong) return;
+	if (!currentSong || !ctx) return;
+
+	// Stop all scheduled oscillators on the current deck
+	if (deck.synthContext) {
+		stopAllScheduledNodes(deck.synthContext);
+	}
+
+	// Cancel any in-progress transition
+	cancelTransition();
+
 	const secondsPerStep = 60 / currentSong.tempo / 4;
 	const targetStep = Math.floor(time / secondsPerStep);
 
@@ -2043,8 +2121,14 @@ export function seek(time: number) {
 	deck.transitionTriggered = false;
 
 	clearDelayBuffer();
-	if (isPlaying && ctx) {
+
+	if (isPlaying) {
 		deck.nextNoteTime = ctx.currentTime;
+		// Update playbackStartTime so getPosition() returns the correct seek time
+		deck.playbackStartTime = ctx.currentTime - time;
+	} else {
+		// When paused, save the seek position for resume
+		deck.pausedAtPosition = time;
 	}
 }
 

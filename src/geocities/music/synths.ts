@@ -19,6 +19,8 @@ export type SynthContext = {
 	state: {
 		lastMelodyFreq: number | null;
 	};
+	/** Tracked audio nodes that can be stopped on seek */
+	scheduledNodes: AudioScheduledSourceNode[];
 };
 
 /** Create a new synth context */
@@ -34,7 +36,40 @@ export function createSynthContext(
 		sidechain,
 		song,
 		state: { lastMelodyFreq: null },
+		scheduledNodes: [],
 	};
+}
+
+/** Track a scheduled node for later cleanup */
+function trackNode(synth: SynthContext, node: AudioScheduledSourceNode): void {
+	synth.scheduledNodes.push(node);
+}
+
+/** Create and track an oscillator */
+function createTrackedOsc(synth: SynthContext): OscillatorNode {
+	const osc = synth.ctx.createOscillator();
+	trackNode(synth, osc);
+	return osc;
+}
+
+/** Create and track a buffer source (for noise) */
+function createTrackedBufferSource(synth: SynthContext): AudioBufferSourceNode {
+	const source = synth.ctx.createBufferSource();
+	trackNode(synth, source);
+	return source;
+}
+
+/** Stop all scheduled nodes and clear the list */
+export function stopAllScheduledNodes(synth: SynthContext): void {
+	const now = synth.ctx.currentTime;
+	for (const node of synth.scheduledNodes) {
+		try {
+			node.stop(now);
+		} catch {
+			// Node may have already stopped
+		}
+	}
+	synth.scheduledNodes = [];
 }
 
 function noteToFreq(note: number) {
@@ -81,7 +116,7 @@ export function playNote(
 	synth.state.lastMelodyFreq = freq; // Update for next note
 
 	// Create main oscillator
-	const osc1 = c.createOscillator();
+	const osc1 = createTrackedOsc(synth);
 	const gain1 = c.createGain();
 	osc1.type = type;
 
@@ -99,7 +134,7 @@ export function playNote(
 	// Add wow and flutter (tape pitch wobble) via LFO on detune
 	if (wowFlutter > 0) {
 		// Wow: slow drift (0.3-0.8 Hz)
-		const wowLfo = c.createOscillator();
+		const wowLfo = createTrackedOsc(synth);
 		const wowGain = c.createGain();
 		wowLfo.type = "sine";
 		wowLfo.frequency.value = 0.3 + Math.random() * 0.5;
@@ -111,7 +146,7 @@ export function playNote(
 		wowLfo.stop(startTime + duration + 0.1);
 
 		// Flutter: faster irregular wobble (4-8 Hz)
-		const flutterLfo = c.createOscillator();
+		const flutterLfo = createTrackedOsc(synth);
 		const flutterGain = c.createGain();
 		flutterLfo.type = "sine";
 		flutterLfo.frequency.value = 4 + Math.random() * 4;
@@ -125,7 +160,7 @@ export function playNote(
 
 	// Add vibrato for sustained notes
 	if (vibrato && duration > 0.3) {
-		const lfo = c.createOscillator();
+		const lfo = createTrackedOsc(synth);
 		const lfoGain = c.createGain();
 		lfo.type = "sine";
 		lfo.frequency.value = 5 + Math.random() * 2; // 5-7 Hz
@@ -146,7 +181,7 @@ export function playNote(
 	// PWM: simulate pulse width modulation by mixing two square waves
 	// One inverted with modulated phase offset creates moving pulse width
 	if (pwmDepth > 0 && type === "square") {
-		osc2 = c.createOscillator();
+		osc2 = createTrackedOsc(synth);
 		gain2 = c.createGain();
 		osc2.type = "square";
 
@@ -163,7 +198,7 @@ export function playNote(
 
 		// PWM LFO modulates the detune of osc2
 		// This creates phase offset that varies, simulating PWM
-		const pwmLfo = c.createOscillator();
+		const pwmLfo = createTrackedOsc(synth);
 		const pwmLfoGain = c.createGain();
 		pwmLfo.type = "triangle"; // Triangle for smooth PWM sweep
 		pwmLfo.frequency.value = 0.5 + Math.random() * 1.5; // 0.5-2 Hz
@@ -181,7 +216,7 @@ export function playNote(
 
 		// Apply wow/flutter to osc2 as well for coherent sound
 		if (wowFlutter > 0) {
-			const wow2 = c.createOscillator();
+			const wow2 = createTrackedOsc(synth);
 			const wowGain2 = c.createGain();
 			wow2.type = "sine";
 			wow2.frequency.value = 0.3 + Math.random() * 0.5;
@@ -193,7 +228,7 @@ export function playNote(
 		}
 	} else if (detuneAmount > 0 && type !== "sine") {
 		// Regular detuned oscillator for richness (non-PWM case)
-		osc2 = c.createOscillator();
+		osc2 = createTrackedOsc(synth);
 		gain2 = c.createGain();
 		osc2.type = type;
 
@@ -213,7 +248,7 @@ export function playNote(
 
 		// Apply wow/flutter to osc2
 		if (wowFlutter > 0) {
-			const wow2 = c.createOscillator();
+			const wow2 = createTrackedOsc(synth);
 			const wowGain2 = c.createGain();
 			wow2.type = "sine";
 			wow2.frequency.value = 0.3 + Math.random() * 0.5;
@@ -264,7 +299,7 @@ export function playBass(
 	const oscType = T.pick(genre.oscTypes.bass);
 
 	// Main bass oscillator
-	const osc = c.createOscillator();
+	const osc = createTrackedOsc(synth);
 	const gain = c.createGain();
 	const filter = c.createBiquadFilter();
 
@@ -287,7 +322,7 @@ export function playBass(
 		}
 		case "trance": {
 			// Punchy pluck with wobble
-			const lfo = c.createOscillator();
+			const lfo = createTrackedOsc(synth);
 			const lfoGain = c.createGain();
 			lfo.frequency.value = 4 + Math.random() * 4; // 4-8 Hz wobble
 			lfoGain.gain.value = 400;
@@ -305,7 +340,7 @@ export function playBass(
 		}
 		case "synthwave": {
 			// Warm sustained bass with slight detune
-			const osc2 = c.createOscillator();
+			const osc2 = createTrackedOsc(synth);
 			osc2.type = oscType;
 			osc2.frequency.setValueAtTime(freq, startTime);
 			osc2.detune.value = 8;
@@ -408,7 +443,7 @@ export function playBass(
 
 	// Sub-bass layer for weight (skip for thin genres)
 	if (genre.name !== "midi" && genre.name !== "chiptune") {
-		const subOsc = c.createOscillator();
+		const subOsc = createTrackedOsc(synth);
 		const subGain = c.createGain();
 		subOsc.type = "sine";
 		subOsc.frequency.setValueAtTime(freq / 2, startTime);
@@ -445,7 +480,7 @@ export function playPad(
 			case "synthwave": {
 				// Lush detuned saw pads
 				for (let i = 0; i < 3; i++) {
-					const osc = c.createOscillator();
+					const osc = createTrackedOsc(synth);
 					const gain = c.createGain();
 					const filter = c.createBiquadFilter();
 					osc.type = "sawtooth";
@@ -470,7 +505,7 @@ export function playPad(
 			case "trance": {
 				// Supersaw-style with filter movement
 				for (let i = 0; i < 4; i++) {
-					const osc = c.createOscillator();
+					const osc = createTrackedOsc(synth);
 					const gain = c.createGain();
 					const filter = c.createBiquadFilter();
 					osc.type = "sawtooth";
@@ -499,10 +534,10 @@ export function playPad(
 			}
 			case "ambient": {
 				// Soft evolving sine pads with slow LFO
-				const osc = c.createOscillator();
-				const osc2 = c.createOscillator();
+				const osc = createTrackedOsc(synth);
+				const osc2 = createTrackedOsc(synth);
 				const gain = c.createGain();
-				const lfo = c.createOscillator();
+				const lfo = createTrackedOsc(synth);
 				const lfoGain = c.createGain();
 				osc.type = "sine";
 				osc2.type = "sine";
@@ -531,7 +566,7 @@ export function playPad(
 			case "vaporwave": {
 				// Detuned, lo-fi, chorus-like
 				for (let i = 0; i < 2; i++) {
-					const osc = c.createOscillator();
+					const osc = createTrackedOsc(synth);
 					const gain = c.createGain();
 					const filter = c.createBiquadFilter();
 					osc.type = "triangle";
@@ -554,8 +589,8 @@ export function playPad(
 			}
 			case "lofi": {
 				// Warm Rhodes-like electric piano
-				const osc = c.createOscillator();
-				const osc2 = c.createOscillator();
+				const osc = createTrackedOsc(synth);
+				const osc2 = createTrackedOsc(synth);
 				const gain = c.createGain();
 				const filter = c.createBiquadFilter();
 				osc.type = "sine";
@@ -582,7 +617,7 @@ export function playPad(
 			case "chiptune":
 			case "midi": {
 				// Simple square/pulse pad
-				const osc = c.createOscillator();
+				const osc = createTrackedOsc(synth);
 				const gain = c.createGain();
 				osc.type = "square";
 				osc.frequency.setValueAtTime(freq, startTime);
@@ -598,7 +633,7 @@ export function playPad(
 			}
 			case "techno": {
 				// Dark, filtered pad
-				const osc = c.createOscillator();
+				const osc = createTrackedOsc(synth);
 				const gain = c.createGain();
 				const filter = c.createBiquadFilter();
 				osc.type = "sawtooth";
@@ -625,8 +660,8 @@ export function playPad(
 			}
 			case "happycore": {
 				// Bright, shimmery pad
-				const osc = c.createOscillator();
-				const osc2 = c.createOscillator();
+				const osc = createTrackedOsc(synth);
+				const osc2 = createTrackedOsc(synth);
 				const gain = c.createGain();
 				osc.type = "square";
 				osc2.type = "sawtooth";
@@ -648,7 +683,7 @@ export function playPad(
 			}
 			default: {
 				// Default sine pad
-				const osc = c.createOscillator();
+				const osc = createTrackedOsc(synth);
 				const gain = c.createGain();
 				osc.type = "sine";
 				osc.frequency.setValueAtTime(freq, startTime);
@@ -676,7 +711,7 @@ export function playArp(
 	const c = synth.ctx;
 	const output = synth.output;
 	const genre = synth.song.genre;
-	const osc = c.createOscillator();
+	const osc = createTrackedOsc(synth);
 	const gain = c.createGain();
 	const filter = c.createBiquadFilter();
 
@@ -698,7 +733,7 @@ export function playArp(
 		}
 		case "synthwave": {
 			// Warm, slightly detuned
-			const osc2 = c.createOscillator();
+			const osc2 = createTrackedOsc(synth);
 			osc.type = "sawtooth";
 			osc2.type = "sawtooth";
 			osc.frequency.setValueAtTime(freq, startTime);
@@ -840,7 +875,7 @@ export function playDrum(
 	const output = synth.output;
 
 	if (type === "kick") {
-		const osc = c.createOscillator();
+		const osc = createTrackedOsc(synth);
 		const gain = c.createGain();
 		osc.type = "sine";
 		osc.frequency.setValueAtTime(150, startTime);
@@ -860,7 +895,7 @@ export function playDrum(
 		triggerSidechain(synth.sidechain, startTime, pumpIntensity * velocity);
 	} else if (type === "snare") {
 		// Body
-		const osc = c.createOscillator();
+		const osc = createTrackedOsc(synth);
 		const oscGain = c.createGain();
 		osc.type = "triangle";
 		osc.frequency.setValueAtTime(180, startTime);
@@ -879,7 +914,7 @@ export function playDrum(
 		for (let i = 0; i < bufferSize; i++) {
 			data[i] = Math.random() * 2 - 1;
 		}
-		const noise = c.createBufferSource();
+		const noise = createTrackedBufferSource(synth);
 		noise.buffer = buffer;
 		const noiseGain = c.createGain();
 		const filter = c.createBiquadFilter();
@@ -901,7 +936,7 @@ export function playDrum(
 		for (let i = 0; i < bufferSize; i++) {
 			data[i] = Math.random() * 2 - 1;
 		}
-		const noise = c.createBufferSource();
+		const noise = createTrackedBufferSource(synth);
 		noise.buffer = buffer;
 		const noiseGain = c.createGain();
 		const filter = c.createBiquadFilter();
@@ -916,7 +951,7 @@ export function playDrum(
 		noise.stop(startTime + duration);
 	} else if (type === "tom") {
 		const freq = pitch || 150;
-		const osc = c.createOscillator();
+		const osc = createTrackedOsc(synth);
 		const gain = c.createGain();
 		osc.type = "sine";
 		osc.frequency.setValueAtTime(freq, startTime);
@@ -934,7 +969,7 @@ export function playDrum(
 		for (let i = 0; i < bufferSize; i++) {
 			data[i] = Math.random() * 2 - 1;
 		}
-		const noise = c.createBufferSource();
+		const noise = createTrackedBufferSource(synth);
 		noise.buffer = buffer;
 		const noiseGain = c.createGain();
 		const filter = c.createBiquadFilter();
@@ -949,8 +984,8 @@ export function playDrum(
 		noise.stop(startTime + 0.8);
 	} else if (type === "cowbell") {
 		// Classic 808-style cowbell - two detuned square waves
-		const osc1 = c.createOscillator();
-		const osc2 = c.createOscillator();
+		const osc1 = createTrackedOsc(synth);
+		const osc2 = createTrackedOsc(synth);
 		const gain = c.createGain();
 		const filter = c.createBiquadFilter();
 
@@ -986,7 +1021,7 @@ export function playDrum(
 			for (let i = 0; i < bufferSize; i++) {
 				data[i] = Math.random() * 2 - 1;
 			}
-			const noise = c.createBufferSource();
+			const noise = createTrackedBufferSource(synth);
 			noise.buffer = buffer;
 			const noiseGain = c.createGain();
 			const filter = c.createBiquadFilter();
@@ -1016,7 +1051,7 @@ export function playDrum(
 		for (let i = 0; i < bufferSize; i++) {
 			data[i] = Math.random() * 2 - 1;
 		}
-		const noise = c.createBufferSource();
+		const noise = createTrackedBufferSource(synth);
 		noise.buffer = buffer;
 		const noiseGain = c.createGain();
 		const filter = c.createBiquadFilter();
@@ -1032,7 +1067,7 @@ export function playDrum(
 		noise.stop(startTime + duration);
 	} else if (type === "rimshot") {
 		// Rimshot - short, tight, high-pitched click
-		const osc = c.createOscillator();
+		const osc = createTrackedOsc(synth);
 		const gain = c.createGain();
 		osc.type = "triangle";
 		osc.frequency.setValueAtTime(1800, startTime);
@@ -1045,7 +1080,7 @@ export function playDrum(
 		osc.stop(startTime + 0.03);
 
 		// Add a click transient
-		const click = c.createOscillator();
+		const click = createTrackedOsc(synth);
 		const clickGain = c.createGain();
 		click.type = "square";
 		click.frequency.value = 2000;
@@ -1064,7 +1099,7 @@ export function playDrum(
 		for (let i = 0; i < bufferSize; i++) {
 			data[i] = Math.random() * 2 - 1;
 		}
-		const noise = c.createBufferSource();
+		const noise = createTrackedBufferSource(synth);
 		noise.buffer = buffer;
 		const noiseGain = c.createGain();
 		const filter = c.createBiquadFilter();
@@ -1081,7 +1116,7 @@ export function playDrum(
 	} else if (type === "conga" || type === "bongo") {
 		// Conga/Bongo - pitched drum with quick decay
 		const freq = type === "conga" ? pitch || 200 : pitch || 350;
-		const osc = c.createOscillator();
+		const osc = createTrackedOsc(synth);
 		const gain = c.createGain();
 		osc.type = "sine";
 		osc.frequency.setValueAtTime(freq * 1.5, startTime);
@@ -1094,7 +1129,7 @@ export function playDrum(
 		osc.stop(startTime + 0.12);
 
 		// Add slap transient
-		const slap = c.createOscillator();
+		const slap = createTrackedOsc(synth);
 		const slapGain = c.createGain();
 		slap.type = "triangle";
 		slap.frequency.value = freq * 3;
@@ -1106,7 +1141,7 @@ export function playDrum(
 		slap.stop(startTime + 0.015);
 	} else if (type === "sub808") {
 		// 808 Sub - deep sine wave kick with longer tail
-		const osc = c.createOscillator();
+		const osc = createTrackedOsc(synth);
 		const gain = c.createGain();
 		osc.type = "sine";
 		osc.frequency.setValueAtTime(60, startTime);
@@ -1144,7 +1179,7 @@ export function playFX(
 				data[i] = (Math.random() * 2 - 1) * 0.8;
 			}
 
-			const noise = c.createBufferSource();
+			const noise = createTrackedBufferSource(synth);
 			noise.buffer = buffer;
 
 			const filter = c.createBiquadFilter();
@@ -1183,7 +1218,7 @@ export function playFX(
 				data[i] = (Math.random() * 2 - 1) * 0.7;
 			}
 
-			const noise = c.createBufferSource();
+			const noise = createTrackedBufferSource(synth);
 			noise.buffer = buffer;
 
 			const filter = c.createBiquadFilter();
@@ -1209,7 +1244,7 @@ export function playFX(
 		case "impact": {
 			// Big hit on downbeat - layered low thump + noise burst
 			// Low thump (sub-bass hit)
-			const osc = c.createOscillator();
+			const osc = createTrackedOsc(synth);
 			const oscGain = c.createGain();
 			osc.type = "sine";
 			osc.frequency.setValueAtTime(80, startTime);
@@ -1229,7 +1264,7 @@ export function playFX(
 					(Math.random() * 2 - 1) * Math.exp(-i / (c.sampleRate * 0.03));
 			}
 
-			const noise = c.createBufferSource();
+			const noise = createTrackedBufferSource(synth);
 			noise.buffer = noiseBuffer;
 			const noiseFilter = c.createBiquadFilter();
 			noiseFilter.type = "highpass";
@@ -1260,7 +1295,7 @@ export function playFX(
 				data[i] = (Math.random() * 2 - 1) * env;
 			}
 
-			const noise = c.createBufferSource();
+			const noise = createTrackedBufferSource(synth);
 			noise.buffer = buffer;
 
 			const filter = c.createBiquadFilter();
@@ -1287,8 +1322,8 @@ export function playFX(
 
 		case "sweep": {
 			// Pure filter sweep on oscillator - wooshy transition sound
-			const osc = c.createOscillator();
-			const osc2 = c.createOscillator();
+			const osc = createTrackedOsc(synth);
+			const osc2 = createTrackedOsc(synth);
 			osc.type = "sawtooth";
 			osc2.type = "sawtooth";
 			osc.frequency.value = 80;

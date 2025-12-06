@@ -577,12 +577,16 @@ export function cancelTransition(): void {
 	const incoming = getInactiveDeck();
 	resetDeck(incoming);
 
-	// Restore outgoing deck to full volume
+	// Restore outgoing deck to full volume (cancel scheduled fades first)
 	const outgoing = getActiveDeck();
 	if (outgoing.gainNode && audioContext) {
+		outgoing.gainNode.gain.cancelScheduledValues(audioContext.currentTime);
 		outgoing.gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 	}
 	if (outgoing.filterNode && audioContext) {
+		outgoing.filterNode.frequency.cancelScheduledValues(
+			audioContext.currentTime,
+		);
 		outgoing.filterNode.frequency.setValueAtTime(
 			20000,
 			audioContext.currentTime,
