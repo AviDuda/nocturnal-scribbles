@@ -184,6 +184,18 @@ export type BassPatternType =
 	| "reggae"
 	| "slap";
 
+export type PadPatternType =
+	| "sustained" // Whole-bar held chords
+	| "stabs" // Short staccato hits (house/disco style)
+	| "pumping" // Hits on every beat, short duration (sidechained feel)
+	| "offbeat" // Hits on the "and" beats
+	| "rhythmic"; // Syncopated rhythm pattern
+
+export type MultiBarBuildType =
+	| "acceleratingSnare" // Sparse → quarter → 8ths → 16th roll
+	| "sparseToDense" // Probabilistic density curve
+	| "tomCascade"; // Descending tom pitches
+
 export type Pattern = {
 	tempo: number;
 	melody: MelodyNote[];
@@ -203,6 +215,7 @@ export type Pattern = {
 	drumPattern?: DrumPatternType;
 	arpPattern?: ArpPatternType;
 	bassPattern?: BassPatternType;
+	padPattern?: PadPatternType;
 };
 
 // Song structure types
@@ -260,6 +273,8 @@ export type Genre = {
 	swingRange: [number, number];
 	// Automix transition styles (one is picked randomly)
 	transitions: TransitionStyle[];
+	// Multi-bar build types for tension builds before drops
+	buildTypes: MultiBarBuildType[];
 };
 
 export type Song = {

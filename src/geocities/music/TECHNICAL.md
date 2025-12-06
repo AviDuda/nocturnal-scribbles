@@ -19,10 +19,12 @@ This document explains the technical architecture of the Geocities Music Player.
 6. [Automix & Dual-Deck Mixing](#automix--dual-deck-mixing)
 7. [The Chaos Slider](#the-chaos-slider)
 8. [FX & Risers](#fx--risers)
-9. [Dusty Archives Effect](#dusty-archives-effect)
-10. [Radio: DJs, Jingles & Commercials](#radio-djs-jingles--commercials)
-11. [Export: WAV & MIDI](#export-wav--midi)
-12. [File Reference](#file-reference)
+9. [Rhythmic Pads](#rhythmic-pads)
+10. [Multi-Bar Builds](#multi-bar-builds)
+11. [Dusty Archives Effect](#dusty-archives-effect)
+12. [Radio: DJs, Jingles & Commercials](#radio-djs-jingles--commercials)
+13. [Export: WAV & MIDI](#export-wav--midi)
+14. [File Reference](#file-reference)
 
 ---
 
@@ -348,6 +350,110 @@ Sweep:    2x SawOsc (detuned) → BandpassFilter (up/down sweep) → Gain
 - Other sections opt-in explicitly (e.g., EDM intros, high-energy choruses)
 
 **Note:** FX are audio-only - they're not included in MIDI export since they're synthesized noise, not pitched notes.
+
+---
+
+## Rhythmic Pads
+
+### ELI5
+
+Imagine a keyboard player holding down a chord for a whole bar. Boooring. Now imagine them doing funky stabs like in disco music - hitting the chord and letting go real quick. Or playing on the offbeats like reggae. The robot DJ can do both! It picks a rhythm style that matches the genre and makes the chords groove instead of just sitting there.
+
+### Technical
+
+Pads support multiple rhythmic patterns instead of just sustained whole-bar chords. The pattern is selected per-section based on genre and energy level.
+
+**Pad Pattern Types (`types.ts`):**
+
+| Pattern | Description |
+|---------|-------------|
+| `sustained` | Whole-bar held chords (classic pad sound) |
+| `stabs` | Short staccato hits on beats 1 and 3 (house/disco) |
+| `pumping` | Quarter-note hits with short duration (sidechained feel) |
+| `offbeat` | Hits on the "and" beats (reggae/ska style) |
+| `rhythmic` | Syncopated patterns (funk grooves) |
+
+**Genre Preferences (`patterns.ts`):**
+
+| Genre | Preferred Patterns |
+|-------|-------------------|
+| Techno | pumping, stabs, offbeat |
+| Trance | pumping, sustained, stabs |
+| Happycore | pumping, stabs, offbeat |
+| Lofi | sustained, rhythmic |
+| Ambient | sustained (mostly) |
+| Vaporwave | sustained, rhythmic |
+
+**Pattern Selection:**
+- `pickPadPattern(genre, energy)` selects from genre's weighted preferences
+- High energy (>0.6) reduces weight of `sustained` patterns
+- Low energy (<0.4) reduces weight of rhythmic patterns
+- Pattern stored in `pattern.padPattern` for metadata display
+
+**Rhythmic Pattern Examples:**
+```
+sustained:  [################]  (one chord, full bar)
+stabs:      [#...#...#.......]  (beats 1, 3, optional 4)
+pumping:    [#...#...#...#...]  (every beat, short)
+offbeat:    [..#...#...#...#.]  (every "and")
+rhythmic:   [#..#..#...#...#.]  (syncopated funk)
+```
+
+---
+
+## Multi-Bar Builds
+
+### ELI5
+
+You know that part in EDM songs where the snare drum starts going faster and faster? Like a roller coaster clicking up the hill before the big drop? The robot DJ does that too! Instead of just one bar of drum roll, it can build tension across 2, 3, or 4 bars - starting slow and sparse, getting faster and louder until BOOM, the drop hits.
+
+### Technical
+
+Multi-bar builds create tension across multiple bars before climactic moments, replacing single-bar fills for longer sections.
+
+**Build Types (`types.ts`, `genres.ts`):**
+
+| Build Type | Description |
+|------------|-------------|
+| `acceleratingSnare` | Sparse hits → quarters → 8ths → 16th roll |
+| `sparseToDense` | Probabilistic density with quadratic curve |
+| `tomCascade` | Descending tom pitches, getting faster |
+
+**Genre Build Preferences (`genres.ts`):**
+
+Each genre defines its preferred build types:
+
+| Genre | Build Types |
+|-------|-------------|
+| Techno, Trance | acceleratingSnare, sparseToDense |
+| Happycore | acceleratingSnare, sparseToDense |
+| Lofi, Ambient | sparseToDense, tomCascade |
+| Vaporwave | sparseToDense, tomCascade |
+| Synthwave | all three |
+| Chiptune, MIDI | acceleratingSnare, tomCascade |
+
+**When Builds Trigger (`patterns.ts`):**
+- Breakdown sections with 4+ bars
+- High-energy sections (≥0.7) with 8+ bars (40% chance)
+- Build length: half the section, capped at 4 bars
+
+**Accelerating Snare Pattern:**
+```
+Bar 1:  [.....X.....X...]  (sparse: beats 2 and 4)
+Bar 2:  [X...X...X...X...]  (quarter notes)
+Bar 3:  [X.X.X.X.X.X.X.X.]  (8th notes)
+Bar 4:  [XXXXXXXXXXXXXXXX]  (16th note roll with crescendo)
+```
+
+**Sparse-to-Dense Algorithm:**
+- Hit probability = (progress²) × 0.8
+- Velocity crescendos from 0.3 to 1.0
+- Final 4 steps guaranteed hits for climax
+
+**Build Zone Handling:**
+- Regular snare patterns skip during build zone
+- Single-bar fills skip when multi-bar build is active
+- Kick and hi-hat continue normally for groove continuity
 
 ---
 

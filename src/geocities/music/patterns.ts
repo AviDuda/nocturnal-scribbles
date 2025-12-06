@@ -8,6 +8,8 @@ import type {
 	GenreType,
 	MelodyNote,
 	MelodyPatternType,
+	MultiBarBuildType,
+	PadPatternType,
 	Pattern,
 	RhythmVariationType,
 	Section,
@@ -166,6 +168,22 @@ const arpPatternWeights: Record<
 	vaporwave: { spread: 3, brokenChord: 3, thumb: 2, cascade: 1 },
 };
 
+// Pad pattern weights by genre
+const padPatternWeights: Record<
+	GenreType,
+	Partial<Record<PadPatternType, number>>
+> = {
+	chiptune: { stabs: 3, sustained: 2, rhythmic: 1 },
+	ambient: { sustained: 5, rhythmic: 1 },
+	synthwave: { sustained: 3, pumping: 2, stabs: 1 },
+	lofi: { sustained: 4, rhythmic: 2 },
+	techno: { pumping: 4, stabs: 3, offbeat: 2, rhythmic: 1 },
+	trance: { pumping: 3, sustained: 2, stabs: 2 },
+	midi: { sustained: 3, stabs: 2 },
+	happycore: { pumping: 3, stabs: 3, offbeat: 1 },
+	vaporwave: { sustained: 4, rhythmic: 1 },
+};
+
 // Pick bass pattern based on genre and section energy
 function pickBassPattern(genre: Genre, energy: number): BassPatternType {
 	const weights = bassPatternWeights[genre.name] ?? { simple: 1 };
@@ -239,6 +257,44 @@ function pickArpPattern(genre: Genre, energy: number): ArpPatternType {
 		if (r <= 0) return pattern;
 	}
 	return "up";
+}
+
+// Pick pad pattern based on genre and section energy
+function pickPadPattern(genre: Genre, energy: number): PadPatternType {
+	const weights = padPatternWeights[genre.name] ?? { sustained: 1 };
+
+	// Filter by energy - rhythmic patterns for high energy, sustained for low
+	const energyFiltered: Partial<Record<PadPatternType, number>> = {};
+	const rhythmicPatterns: PadPatternType[] = [
+		"stabs",
+		"pumping",
+		"offbeat",
+		"rhythmic",
+	];
+
+	for (const [pattern, weight] of Object.entries(weights) as [
+		PadPatternType,
+		number,
+	][]) {
+		if (energy < 0.4 && rhythmicPatterns.includes(pattern)) {
+			// Low energy: reduce rhythmic patterns
+			energyFiltered[pattern] = weight * 0.3;
+		} else if (energy > 0.6 && pattern === "sustained") {
+			// High energy: reduce sustained in favor of rhythmic
+			energyFiltered[pattern] = weight * 0.5;
+		} else {
+			energyFiltered[pattern] = weight;
+		}
+	}
+
+	const entries = Object.entries(energyFiltered) as [PadPatternType, number][];
+	const total = entries.reduce((sum, [, w]) => sum + w, 0);
+	let r = Math.random() * total;
+	for (const [pattern, weight] of entries) {
+		r -= weight;
+		if (r <= 0) return pattern;
+	}
+	return "sustained";
 }
 
 // Generate a short melodic phrase (for call/response and riffs)
@@ -1412,6 +1468,165 @@ function pickFillType(energy: number, genre: Genre): FillType {
 	return T.pick(fillTypes);
 }
 
+/**
+ * Generate a multi-bar tension build leading up to a drop or climax.
+ * Creates accelerating patterns across 2-8 bars instead of just a single-bar fill.
+ */
+function generateMultiBarBuild(
+	buildBars: number,
+	startingBar: number,
+	energy: number,
+	buildType: MultiBarBuildType,
+): { step: number; type: string; velocity?: number; pitch?: number }[] {
+	const hits: {
+		step: number;
+		type: string;
+		velocity?: number;
+		pitch?: number;
+	}[] = [];
+
+	const totalSteps = buildBars * STEPS_PER_BAR;
+	const startStep = startingBar * STEPS_PER_BAR;
+
+	switch (buildType) {
+		case "acceleratingSnare": {
+			// Snare hits that get progressively closer together
+			// Bar 1: hits on 1, Bar 2: hits on 1 and 3, Bar 3: every beat, Bar 4: 8ths, etc.
+			for (let bar = 0; bar < buildBars; bar++) {
+				const barStart = startStep + bar * STEPS_PER_BAR;
+				const progress = bar / (buildBars - 1 || 1); // 0 to 1
+				const barVelocity = (0.3 + progress * 0.7) * energy;
+
+				if (bar === buildBars - 1) {
+					// Final bar: 16th note roll with crescendo
+					for (let i = 0; i < 16; i++) {
+						hits.push({
+							step: barStart + i,
+							type: "snare",
+							velocity: (0.6 + (i / 16) * 0.4) * energy,
+						});
+					}
+				} else if (bar >= buildBars - 2 && buildBars >= 3) {
+					// Second to last bar: 8th notes
+					for (let i = 0; i < 8; i++) {
+						hits.push({
+							step: barStart + i * 2,
+							type: "snare",
+							velocity: barVelocity,
+						});
+					}
+				} else if (bar >= buildBars / 2) {
+					// Middle bars: quarter notes
+					for (let beat = 0; beat < 4; beat++) {
+						hits.push({
+							step: barStart + beat * 4,
+							type: "snare",
+							velocity: barVelocity,
+						});
+					}
+				} else {
+					// Early bars: sparse hits on 2 and 4
+					hits.push({
+						step: barStart + 4,
+						type: "snare",
+						velocity: barVelocity * 0.7,
+					});
+					hits.push({
+						step: barStart + 12,
+						type: "snare",
+						velocity: barVelocity * 0.8,
+					});
+				}
+			}
+			break;
+		}
+
+		case "sparseToDense": {
+			// Gradually increasing density of hits across all bars
+			for (let step = 0; step < totalSteps; step++) {
+				const progress = step / totalSteps;
+				// Probability of a hit increases as we progress
+				const hitProbability = progress * progress * 0.8; // Quadratic curve
+
+				if (Math.random() < hitProbability) {
+					// Prefer snares but occasionally add claps
+					const isClap = Math.random() > 0.8;
+					hits.push({
+						step: startStep + step,
+						type: isClap ? "clap" : "snare",
+						velocity: (0.3 + progress * 0.7) * energy,
+					});
+				}
+			}
+			// Ensure final 4 steps have hits for climax
+			for (let i = 12; i < 16; i++) {
+				const finalBarStart = startStep + (buildBars - 1) * STEPS_PER_BAR;
+				hits.push({
+					step: finalBarStart + i,
+					type: "snare",
+					velocity: (0.7 + (i - 12) * 0.075) * energy,
+				});
+			}
+			break;
+		}
+
+		case "tomCascade": {
+			// Toms that cascade down in pitch, getting faster
+			const tomPitches = [250, 200, 160, 130, 100]; // High to low
+
+			for (let bar = 0; bar < buildBars; bar++) {
+				const barStart = startStep + bar * STEPS_PER_BAR;
+				const progress = bar / (buildBars - 1 || 1);
+				const barVelocity = (0.4 + progress * 0.6) * energy;
+
+				if (bar === buildBars - 1) {
+					// Final bar: rapid tom descent
+					for (let i = 0; i < 5; i++) {
+						hits.push({
+							step: barStart + 8 + i * 1.5,
+							type: "tom",
+							pitch: tomPitches[i],
+							velocity: barVelocity,
+						});
+					}
+					// End with kick
+					hits.push({
+						step: barStart + 15,
+						type: "kick",
+						velocity: energy,
+					});
+				} else if (bar >= buildBars / 2) {
+					// Later bars: two toms per bar
+					const pitchIdx = Math.min(bar, tomPitches.length - 1);
+					hits.push({
+						step: barStart + 4,
+						type: "tom",
+						pitch: tomPitches[Math.max(0, pitchIdx - 1)],
+						velocity: barVelocity,
+					});
+					hits.push({
+						step: barStart + 12,
+						type: "tom",
+						pitch: tomPitches[pitchIdx],
+						velocity: barVelocity,
+					});
+				} else {
+					// Early bars: single tom hit
+					hits.push({
+						step: barStart + 12,
+						type: "tom",
+						pitch: tomPitches[0],
+						velocity: barVelocity * 0.7,
+					});
+				}
+			}
+			break;
+		}
+	}
+
+	return hits;
+}
+
 // Generate free melody (original random movement style)
 function generateFreeMelody(
 	scale: number[],
@@ -2111,19 +2326,91 @@ export function generatePattern(params: PatternParams): Pattern {
 		}
 	}
 
-	// Generate pad chords
+	// Generate pad chords with rhythmic variation
 	if (section.hasPad) {
+		const padPatternType = pickPadPattern(genre, section.energy);
+		pattern.padPattern = padPatternType;
+
 		for (let bar = 0; bar < bars; bar++) {
 			const progBar = bar % progression.length;
 			const chordRoot = progression[progBar] ?? 0;
 			const chordNotes = [0, 2, 4].map(
 				(d) => getScaleNote(scale, chordRoot + d, 0) + rootNote,
 			);
-			pattern.pad.push({
-				step: bar * STEPS_PER_BAR,
-				notes: chordNotes,
-				duration: STEPS_PER_BAR,
-			});
+			const barStart = bar * STEPS_PER_BAR;
+
+			switch (padPatternType) {
+				case "sustained":
+					// Whole-bar held chords
+					pattern.pad.push({
+						step: barStart,
+						notes: chordNotes,
+						duration: STEPS_PER_BAR,
+					});
+					break;
+
+				case "stabs":
+					// Short staccato hits on beats 1 and 3 (house/disco style)
+					pattern.pad.push({
+						step: barStart,
+						notes: chordNotes,
+						duration: 1,
+					});
+					pattern.pad.push({
+						step: barStart + 8,
+						notes: chordNotes,
+						duration: 1,
+					});
+					// Occasional extra stab
+					if (Math.random() > 0.5) {
+						pattern.pad.push({
+							step: barStart + 12,
+							notes: chordNotes,
+							duration: 0.5,
+						});
+					}
+					break;
+
+				case "pumping":
+					// Hits on every beat, short duration (sidechained feel)
+					for (let beat = 0; beat < 4; beat++) {
+						pattern.pad.push({
+							step: barStart + beat * 4,
+							notes: chordNotes,
+							duration: 1.5,
+						});
+					}
+					break;
+
+				case "offbeat":
+					// Hits on the "and" beats (offbeats)
+					for (let beat = 0; beat < 4; beat++) {
+						pattern.pad.push({
+							step: barStart + beat * 4 + 2,
+							notes: chordNotes,
+							duration: 1.5,
+						});
+					}
+					break;
+
+				case "rhythmic": {
+					// Syncopated rhythm pattern
+					const rhythmPatterns = [
+						[0, 3, 6, 10, 14], // Syncopated funk
+						[0, 4, 7, 12], // Dotted rhythm
+						[0, 3, 8, 11], // Off-kilter groove
+					];
+					const selectedRhythm = T.pick(rhythmPatterns);
+					for (const step of selectedRhythm) {
+						pattern.pad.push({
+							step: barStart + step,
+							notes: chordNotes,
+							duration: 1.5,
+						});
+					}
+					break;
+				}
+			}
 		}
 	}
 
@@ -2134,9 +2421,35 @@ export function generatePattern(params: PatternParams): Pattern {
 		const dp = drumPatterns[patternName];
 		if (!dp) return pattern; // Safety check
 
+		// Determine if we should use a multi-bar build
+		// Use builds for: breakdown sections with 4+ bars, or high-energy sections with 8+ bars
+		const useMultiBarBuild =
+			(section.type === "breakdown" && bars >= 4) ||
+			(section.energy >= 0.7 && bars >= 8 && Math.random() > 0.4);
+
+		let buildStartBar = -1;
+		let buildBars = 0;
+
+		if (useMultiBarBuild) {
+			// Calculate build length: half the section, capped at 4 bars
+			buildBars = Math.min(4, Math.floor(bars / 2));
+			buildStartBar = bars - buildBars;
+
+			// Generate the multi-bar build
+			const buildType = T.pick(genre.buildTypes);
+			const buildHits = generateMultiBarBuild(
+				buildBars,
+				buildStartBar,
+				section.energy,
+				buildType,
+			);
+			pattern.drums.push(...buildHits);
+		}
+
 		for (let bar = 0; bar < bars; bar++) {
 			const barStart = bar * STEPS_PER_BAR;
 			const isLastBar = bar === bars - 1;
+			const isInBuildZone = useMultiBarBuild && bar >= buildStartBar;
 
 			// Apply rhythm variations
 			if (rhythmVariation === "dropout") {
@@ -2193,14 +2506,16 @@ export function generatePattern(params: PatternParams): Pattern {
 				}
 			}
 
-			// Snare
-			for (const s of dp.snare) {
-				if (!isLastBar || s < 12) {
-					pattern.drums.push({
-						step: barStart + s,
-						type: "snare",
-						velocity: section.energy,
-					});
+			// Snare (skip during build zone since multi-bar build provides snares)
+			if (!isInBuildZone) {
+				for (const s of dp.snare) {
+					if (!isLastBar || s < 12) {
+						pattern.drums.push({
+							step: barStart + s,
+							type: "snare",
+							velocity: section.energy,
+						});
+					}
 				}
 			}
 
@@ -2362,8 +2677,8 @@ export function generatePattern(params: PatternParams): Pattern {
 				}
 			}
 
-			// Fill on last bar - use improved fill system
-			if (isLastBar && section.energy > 0.5) {
+			// Fill on last bar (skip if using multi-bar build which already covers it)
+			if (isLastBar && section.energy > 0.5 && !useMultiBarBuild) {
 				const fillType = pickFillType(section.energy, genre);
 				const fill = generateFill(barStart, fillType, section.energy);
 				pattern.drums.push(...fill);

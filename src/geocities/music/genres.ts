@@ -18,6 +18,7 @@ export const genres: Record<GenreType, Genre> = {
 		attackRange: [0.003, 0.008],
 		swingRange: [0, 0.05], // Mostly straight timing for that rigid 8-bit feel
 		transitions: ["drop", "hardcut"],
+		buildTypes: ["acceleratingSnare", "tomCascade"],
 	},
 	ambient: {
 		name: "ambient",
@@ -38,6 +39,7 @@ export const genres: Record<GenreType, Genre> = {
 		attackRange: [0.2, 0.4],
 		swingRange: [0.05, 0.15], // Very slight swing for organic feel
 		transitions: ["crossfade", "echo"],
+		buildTypes: ["sparseToDense", "tomCascade"],
 	},
 	synthwave: {
 		name: "synthwave",
@@ -58,6 +60,7 @@ export const genres: Record<GenreType, Genre> = {
 		attackRange: [0.01, 0.03],
 		swingRange: [0, 0.08], // Minimal swing
 		transitions: ["filterSweep", "beatmatch"],
+		buildTypes: ["acceleratingSnare", "sparseToDense", "tomCascade"],
 	},
 	lofi: {
 		name: "lofi",
@@ -84,6 +87,7 @@ export const genres: Record<GenreType, Genre> = {
 		attackRange: [0.03, 0.08],
 		swingRange: [0.25, 0.4], // Heavy swing for that jazzy lofi feel
 		transitions: ["crossfade", "filterSweep"],
+		buildTypes: ["sparseToDense", "tomCascade"],
 	},
 	techno: {
 		name: "techno",
@@ -112,6 +116,7 @@ export const genres: Record<GenreType, Genre> = {
 		attackRange: [0.005, 0.02],
 		swingRange: [0, 0.03], // Dead straight for machine precision
 		transitions: ["beatmatch", "filterSweep", "drop"],
+		buildTypes: ["acceleratingSnare", "sparseToDense"],
 	},
 	trance: {
 		name: "trance",
@@ -125,6 +130,7 @@ export const genres: Record<GenreType, Genre> = {
 		attackRange: [0.005, 0.02],
 		swingRange: [0, 0.03], // Straight timing
 		transitions: ["beatmatch", "filterSweep"],
+		buildTypes: ["acceleratingSnare", "sparseToDense"],
 	},
 	midi: {
 		name: "midi",
@@ -141,6 +147,7 @@ export const genres: Record<GenreType, Genre> = {
 		attackRange: [0.001, 0.005], // Instant attack
 		swingRange: [0, 0.02], // Rigid timing
 		transitions: ["hardcut"],
+		buildTypes: ["acceleratingSnare", "tomCascade"],
 	},
 	happycore: {
 		name: "happycore",
@@ -154,6 +161,7 @@ export const genres: Record<GenreType, Genre> = {
 		attackRange: [0.003, 0.01],
 		swingRange: [0, 0.03], // Dead straight for maximum energy
 		transitions: ["drop", "beatmatch"],
+		buildTypes: ["acceleratingSnare", "sparseToDense"],
 	},
 	vaporwave: {
 		name: "vaporwave",
@@ -173,6 +181,7 @@ export const genres: Record<GenreType, Genre> = {
 		attackRange: [0.1, 0.2], // Slow attack
 		swingRange: [0.15, 0.25], // Lazy swing
 		transitions: ["echo", "crossfade"],
+		buildTypes: ["sparseToDense", "tomCascade"],
 	},
 };
 

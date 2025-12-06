@@ -73,20 +73,6 @@ Physical dial UI to tune between stations. Static between frequencies. Signal cl
 
 ## Musical Content
 
-### Pattern Enhancements
-
-- **Rhythmic Pads / Chord Stabs** - Pads are currently always sustained whole-bar chords:
-  - Staccato chord stabs (house/disco style)
-  - Pumping sidechained chords
-  - Offbeat chord hits
-  - Filter sweeps on pad sustains
-
-- **Multi-Bar Builds** - Fills only happen on last bar of sections:
-  - 4-8 bar tension builds before drops
-  - Accelerating snare patterns across multiple bars
-  - Filter sweeps spanning breakdown sections
-  - Energy ramps instead of sudden transitions
-
 ### Melody Patterns (Future)
 
 - **Question/Answer Phrasing** - Musical punctuation (more sophisticated than current call/response)
@@ -307,10 +293,8 @@ No user tracking required - all based on time, input, or page content.
 
 ### Do Next (High Impact)
 - Song seed for sharing
-- Rhythmic pads / chord stabs - easy pattern variation
 
 ### Do Eventually (Medium Impact)
-- Multi-bar builds before drops
 - Portamento on leads
 - More visualizer modes
 - Reverb effect
