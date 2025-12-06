@@ -640,6 +640,14 @@ Want to keep your procedural masterpiece? The robot can record the whole song an
 - Program mapping per genre (Chiptune → program 80, Lofi → program 4, etc.)
 - Uses standard GM percussion mapping
 
+**Filename Format:**
+```
+{trackName}_[{genre}_{structure}].{ext}
+```
+Example: `midnight_neon_drive_A_[synthwave_build-drop].wav`
+
+The suffix makes it easy to sort/filter exports by genre or structure type.
+
 ---
 
 ## File Reference

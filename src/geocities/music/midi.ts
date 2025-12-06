@@ -363,7 +363,9 @@ export async function saveSongAsMIDI(
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement("a");
 	a.href = url;
-	a.download = `${song.trackName.replace(/[^a-zA-Z0-9_-]/g, "_")}.mid`;
+	const safeName = song.trackName.replace(/[^a-zA-Z0-9_-]/g, "_");
+	const suffix = `[${song.genre.name}_${song.structure.name.replace(/ /g, "_").toLowerCase()}]`;
+	a.download = `${safeName}_${suffix}.mid`;
 	document.body.appendChild(a);
 	a.click();
 	document.body.removeChild(a);
