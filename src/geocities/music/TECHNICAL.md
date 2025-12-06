@@ -234,6 +234,7 @@ CHILL (-1) ←─────────────●────────
   - `color: string` - titlebar highlighting
 - Periodic DJ breaks, commercials, jingles between songs
 - Genres constrained to station's preferences
+- **Page-independent music:** rootNote, scale, and chord progression are randomized (not derived from page content like in tape mode)
 
 ---
 

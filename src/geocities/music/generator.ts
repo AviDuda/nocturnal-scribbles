@@ -712,9 +712,17 @@ function generateSong(visualState: VisualState, targetTempo?: number): Song {
 		genre = selectGenre(visualState, bSide, variety);
 	}
 	const structure = selectStructure(genre);
-	const scaleName = selectScale(visualState, genre);
+	// In radio mode, use genre's preferred scales; in tape mode, allow emoji overrides
+	const scaleName =
+		playerMode === "radio"
+			? T.pick(genre.preferredScales)
+			: selectScale(visualState, genre);
 	const scale = scales[scaleName];
-	const rootNote = Math.floor((visualState.dominantHue / 360) * 12);
+	// In radio mode, randomize root note; in tape mode, derive from page hue
+	const rootNote =
+		playerMode === "radio"
+			? Math.floor(Math.random() * noteNames.length)
+			: Math.floor((visualState.dominantHue / 360) * noteNames.length);
 
 	// Tempo selection: match target if provided (for automix), otherwise random
 	let tempo: number;
@@ -729,7 +737,11 @@ function generateSong(visualState: VisualState, targetTempo?: number): Song {
 		tempo = pickFromRange(genre.tempoRange);
 	}
 
-	const progIndex = (rootNote + visualState.elementCount) % progressions.length;
+	// In radio mode, randomize progression; in tape mode, derive from page
+	const progIndex =
+		playerMode === "radio"
+			? Math.floor(Math.random() * progressions.length)
+			: (rootNote + visualState.elementCount) % progressions.length;
 	const progression = progressions[progIndex] ?? [0, 3, 4, 4];
 
 	// Pick random synthesis parameters from genre ranges for this song
