@@ -5,189 +5,82 @@
       [ Best experienced at 2 AM ]
 ```
 
-A procedural music generator that creates endless, unique tracks in the spirit of late-90s web nostalgia. The music adapts to page content, reacting to colors, emojis, and chaos levels.
-
 You are visitor #000001. Please sign the guestbook.
 
-## Features
+## What Is This
 
-### Page-Reactive Generation
+A never-ending stream of procedural music that plays in the corner of your screen. No two songs are the same. The music knows what page you're on, what time it is, and how chaotic your life choices are.
 
-Every track is unique. The generator reads your page like a webmaster reads their hit counter:
+Reading a late-night blog post full of code blocks? Chill digital vibes.
 
-- **Content-aware**: Code blocks trigger digital vibes, blockquotes create reflective moods, long paragraphs shift toward ambient
-- **Emoji-aware**: Raccoons bring lofi, fire emojis bring energy, spooky emojis go dark
-- **Time-aware**: Late night gets chill and dark, weekends get party energy
-- **Visual-aware**: Page colors, gradients, and chaos level (marquees, animations) all influence the mood
+3 AM on a Saturday with raccoon emojis everywhere? You're getting lofi trash panda beats.
 
-### Two-Axis Mood System
+Site covered in marquees, spinning GIFs, and fire emojis? Prepare for maximum energy happycore.
 
-Genres live on a mood map. Page content, time of day, and visual properties shift where you land:
+## Two Ways To Listen
 
-```
-                BRIGHT
-                   ↑
-       Chiptune    |    Happycore
-       MIDI        |    Trance
-                   |
-CHILL ←————————————●————————————→ ENERGY
-                   |
-       Ambient     |    Techno
-       Vaporwave   |    Synthwave
-       Lofi        |
-                   ↓
-                 DARK
-```
+### Tape Mode 📼
 
-### Genres
+Your page becomes a mixtape. The music reacts to what you're viewing. Flip the tape for Side B and the whole mood inverts. Chill becomes chaos. Dark becomes bright.
 
-Nine distinct styles, each with unique synthesis:
+### Radio Mode 📻
 
-| Genre | Tempo | Character |
-|-------|-------|-----------|
-| Chiptune | 120-160 | 8-bit arcade, square waves |
-| Ambient | 60-90 | Floating pads, spacey delay |
-| Synthwave | 100-120 | Neon nights, sawtooth leads |
-| Lofi | 70-90 | Jazzy swing, warm filters |
-| Techno | 125-140 | Machine precision, sidechain pump |
-| Trance | 135-150 | Euphoric builds, big drops |
-| MIDI | 100-140 | 90s homepage sound, dry and thin |
-| Happycore | 160-180 | Maximum BPM, rave energy |
-| Vaporwave | 60-80 | Slowed down, detuned, empty mall |
+Tune into 20 stations on the information superhighway. Each has DJs, jingles, and commercials for fictional 90s web products like GuestBook Plus, MIDI Collection Pro, and the Forbidden Cat Adoption Agency.
 
-### Song Structures
+Some stations:
 
-```
-[ UNDER CONSTRUCTION - 18 STRUCTURES AND COUNTING ]
-```
+- **RACCOON FM** (97.3) - Nocturnal beats for night owls
+- **DUMPSTER DIVE FM** (3.AM) - We eat everything
+- **RAVE.NET** (140.0) - Maximum BPM, minimum sleep
+- **THE VOID** (0.01) - ...
+- **MIDNIGHT.GOV** (0.00) - Numbers. Only numbers.
+- **CAFE.FM** (45.0) - Take your time
+- **PIRATE RADIO** (???) - Unauthorized broadcast
+- **HOLD MUSIC** (1.800) - Your call is important to us
 
-Eighteen compositional forms including:
+## The Forbidden Cats Are Here
 
-- **Verse-Chorus** - Classic pop structure
-- **Build-Drop** - EDM tension and release
-- **AABA** - Jazz standard form
-- **Rave** - Multiple drops, high energy
-- **Chill** - Laid back, no high energy
-- **Epic** - Slow build to massive climax
-- **Drone** - Long ambient evolution
-- **12-Bar Blues** - Classic blues form
-- Plus: Ambient, Through-Composed, Loop, Minimal, Rondo, Binary, Strophic, Medley, Double Drop, Breakdown-Heavy
+This player was clearly made by raccoons. The DJ voices read guestbook entries from TrashPandaFan and xX_DarkAngel_Xx. The commercials sell Dumpster Diving Certification Courses. Track names like `3am_raccoon_lofi_F#` appear without explanation.
 
-### Melody Patterns
+If you see a raccoon emoji on the page, the music knows. It always knows.
 
-Sixteen distinct melodic approaches:
+## Genres
 
-- **Riff** - Short repeating fragment
-- **Sequence** - Motif at different pitches
-- **Call and Response** - Phrase then answer
-- **Pedal** - Melody over drone note
-- **Counterpoint** - Two independent lines
-- **Motif Development** - Theme with variations (inversion, augmentation)
-- Plus: Free, Octave Jumps, Trill, Ostinato, Scale Run, Syncopated, Staccato, Chromatic Approach, Echo, Intervallic
+Nine flavors of late-90s internet music:
 
-### Rhythm
+- **Chiptune** - 8-bit arcade bleeps
+- **MIDI** - The authentic sound of someone's Angelfire homepage
+- **Synthwave** - Neon nights, chrome highways, 1985 forever
+- **Lofi** - Jazzy beats to study/procrastinate to
+- **Vaporwave** - Empty malls, marble fountains, slowed-down memories
+- **Ambient** - Drifting through the void
+- **Techno** - Machine precision, warehouse energy
+- **Trance** - Euphoric builds, hands in the air
+- **Happycore** - 180 BPM, no regrets
 
-- **23 drum patterns**: basic, syncopated, house, techno, trap, dnb, jazz, latin, afrobeat, dubstep, drill, motorik, and more
-- **4 rhythm variations**: normal, breakdown (stripped to kick), dropout (random silences), polyrhythm (cross-rhythms)
-- **6 fill types**: snare rolls, tom fills, crashes, flams, ghost notes, buildups
+The player picks genres based on the mood of your page. Dark page at 3 AM? Probably vaporwave or ambient. Bright page with sparkle emojis? Chiptune or happycore.
 
-### Tape vs Radio Mode
+## Old Posts Sound Dusty
 
-**Tape Mode** (Side A / Side B)
-- Page-reactive music that adapts to what you're viewing
-- Flip the tape for B-side: inverts the mood (chill lofi becomes energetic happycore)
-- Each page gets its own unique mixtape
+Reading something from a year ago? The music gets that worn-cassette treatment. Tape hiss. Vinyl crackle. The older the post, the dustier the sound. Archives should sound like archives.
 
-**Radio Mode**
-- Tune into a station for the full DJ experience
-- Station jingles, commercials, guestbook shoutouts, song dedications
-- Station genre preferences override page detection
-- Click radio again to cycle through stations
+## Automix
 
-### Radio Stations
+When one song ends, another begins. With automix on, they blend together like a DJ set. The tempo stays close, the vibes stay right, and you never have to touch a thing.
 
-```
->>> TUNE IN TO THE INFORMATION SUPERHIGHWAY <<<
-```
+## Chaos Slider
 
-Twenty themed stations:
+There's a slider labeled CHAOS. Turn it up and everything gets weirder. More detuning. More wobble. More unpredictable genre shifts. Turn it down for a calmer, more focused sound. But where's the fun in that?
 
-| Station | Frequency | Vibe |
-|---------|-----------|------|
-| RACCOON FM | 97.3 | Nocturnal beats (lofi, ambient, vaporwave) |
-| GeoCities Radio | 95.6 | The World Wide Web (midi, chiptune) |
-| RAVE.NET | 140.0 | Maximum BPM (happycore, trance, techno) |
-| Aesthetic FM | 80.0 | It's all in your head (vaporwave, ambient) |
-| Nocturnal Scribbles Radio | 3.33 | Late night thoughts |
-| ELEVATOR.FM | 88.8 | Going up (vaporwave, ambient) |
-| CONSTRUCTION ZONE | 110.1 | Hard hats required (techno, trance) |
-| WEBRING RADIO | 99.9 | Previous, next, random (all genres) |
-| MIDNIGHT.GOV | 0.00 | Numbers. Only numbers. (ambient) |
-| PIXEL PARTY | 8.00 | Insert coin (chiptune, happycore) |
-| Y2K PANIC FM | 19.99 | The countdown never ends (trance, techno) |
-| PIRATE RADIO | ??? | Unauthorized broadcast |
-| THE VOID | 0.01 | ... (ambient) |
-| SHOPPING CHANNEL | 24.7 | Call now (vaporwave, midi) |
-| TEST PATTERN | 00.0 | Please stand by (ambient) |
-| HOLD MUSIC | 1.800 | Your call is important to us |
-| ARCADE ZONE | 16.00 | Insert quarters (chiptune, happycore) |
-| DARK.NET | 66.6 | We know your IP (techno, ambient) |
-| CAFE.FM | 45.0 | Take your time (lofi) |
-| DUMPSTER DIVE FM | 3.AM | We eat everything (all genres) |
+## Export
 
-Each station has unique DJs, jingles, and themed commercials for fictional 90s web products.
+Download your procedural creation as WAV or MIDI. The WAV takes about 45 minutes to download on a 56k modem. Worth it.
 
-### Player Controls
+## Why
 
-- **Transport**: Play, pause, stop, prev/next
-- **Seek**: Scrub through songs
-- **Volume** and **Loop**
-- **Genre Lock**: Stay in one genre
-- **Automix**: Smooth transitions between songs
-- **Mixer**: Mute individual tracks (melody, bass, drums, arp, pad)
-- **Chaos Slider**: Affects detuning, timing variation, filter wobble, genre variety
-- **Info Panel**: See current patterns and settings
-- **Station List**: Browse and select stations
+This isn't meant to sound professional. It's meant to sound like the background music in a Flash game, or the MIDI auto-playing on someone's 1998 homepage, or the soundtrack to browsing GeoCities at 2 AM when you should be sleeping.
 
-### Keyboard Shortcuts
-
-| Key | Action |
-|-----|--------|
-| Space | Play/pause |
-| N | Next track |
-| L | Toggle loop |
-| G | Lock/unlock genre |
-| M | Toggle mixer |
-| A | Toggle automix |
-| I | Toggle info panel |
-| S | Toggle station list |
-| T | Tape mode (or flip tape) |
-| R | Radio mode (or cycle stations) |
-| Left/Right | Seek 5 seconds |
-
-### Audio
-
-- Sidechain compression (kick ducks other instruments)
-- Genre-appropriate delay and filtering
-- Filter sweeps on bass and transitions
-- LFO wobble effects
-- Swing timing (lofi gets jazzy, techno stays rigid)
-- Vibrato on sustained notes
-
-### Export
-
-- **WAV**: Full quality audio (download time: 45 minutes on 56k)
-- **MIDI**: Import into your DAW
-
-### Visualizer
-
-Real-time FFT spectrum analyzer reacts to the music.
-
-## The Vibe
-
-This isn't meant to sound professional. It's meant to sound like a MIDI file auto-playing on someone's Angelfire page in 1998, or the background music in a Flash game, or the soundtrack to browsing GeoCities at 2 AM when you should be sleeping.
-
-Procedural, chaotic, nostalgic. Every refresh brings a new track. Every page sounds different.
+Every refresh brings a new track. Every page sounds different.
 
 ```
 *~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*
