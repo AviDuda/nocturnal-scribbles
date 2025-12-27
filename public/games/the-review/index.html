@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A███: The Complete Experience on Steam</title>
+    <meta name="description" content="A███: The Complete Experience is an open-world life simulator set in the Prague metropolitan area.">
+    <meta property="og:title" content="A███: The Complete Experience">
+    <meta property="og:description" content="33.0 years on record. Recommended.">
+    <meta property="og:type" content="website">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ekmas/cs16.css@main/css/cs16.min.css">
+    <style>
+        body {
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .store-container {
+            max-width: 940px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .store-header {
+            border: 1px solid;
+            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .game-title {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .game-tagline {
+            font-size: 13px;
+            color: var(--text-3);
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tag {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-dark);
+            padding: 2px 8px;
+            font-size: 12px;
+            color: var(--text-3);
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            color: var(--accent);
+        }
+
+        .game-meta {
+            font-size: 13px;
+            color: var(--text-3);
+        }
+
+        .game-meta span {
+            margin-right: 20px;
+        }
+
+        .review-summary {
+            margin-top: 10px;
+            color: var(--accent);
+        }
+
+        /* Main layout */
+        .store-main {
+            display: flex;
+            gap: 15px;
+        }
+
+        .store-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .store-sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        /* Sidebar purchase box */
+        .purchase-box {
+            border: 1px solid;
+            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .purchase-title {
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            font-size: 18px;
+            color: var(--accent);
+            margin-bottom: 5px;
+        }
+
+        .price-note {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-bottom: 15px;
+        }
+
+        .play-btn {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .play-btn:disabled {
+            opacity: 0.7;
+        }
+
+        .dlc-section {
+            border-top: 1px solid var(--border-dark);
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .dlc-title {
+            color: var(--text-3);
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .dlc-item {
+            margin-bottom: 8px;
+        }
+
+        .dlc-item .cs-checkbox__label {
+            font-size: 13px;
+        }
+
+        .dlc-desc {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-left: 19px;
+            margin-top: 2px;
+        }
+
+        /* Section boxes */
+        .section-box {
+            border: 1px solid;
+            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            color: var(--accent);
+            font-size: 14px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .section-content {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .section-content p {
+            margin-bottom: 10px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            margin-bottom: 12px;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .feature-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        .feature-title {
+            color: #fff;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .content-warning {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-dark);
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+
+        .content-warning strong {
+            color: var(--accent);
+        }
+
+        /* System requirements */
+        .sys-req {
+            display: flex;
+            gap: 20px;
+        }
+
+        .sys-req-col {
+            flex: 1;
+        }
+
+        .sys-req-title {
+            color: #fff;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .sys-req-list {
+            font-size: 12px;
+            color: var(--text-3);
+        }
+
+        .sys-req-list div {
+            margin-bottom: 5px;
+            padding-left: 10px;
+            border-left: 1px solid var(--border-dark);
+        }
+
+        .sys-note {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        /* Achievements */
+        .achievement {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .achievement:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .achievement-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .achievement-icon.locked {
+            filter: grayscale(1) opacity(0.5);
+        }
+
+        .achievement-info {
+            flex: 1;
+        }
+
+        .achievement-name {
+            color: #fff;
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .achievement-desc {
+            font-size: 11px;
+            color: var(--text-3);
+        }
+
+        .achievement-date {
+            font-size: 10px;
+            color: var(--accent);
+            margin-top: 3px;
+        }
+
+        .achievement-progress {
+            margin-top: 5px;
+        }
+
+        .achievement-progress .cs-progress-bar {
+            height: 16px;
+            width: 100%;
+        }
+
+        .progress-text {
+            font-size: 10px;
+            color: var(--text-3);
+            margin-top: 3px;
+        }
+
+        .achievements-divider {
+            color: var(--text-3);
+            font-size: 12px;
+            margin: 15px 0;
+            padding: 5px 0;
+            border-top: 1px solid var(--border-dark);
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        /* Patch notes */
+        .patch {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .patch:last-child {
+            border-bottom: none;
+        }
+
+        .patch-version {
+            color: var(--accent);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .patch-list {
+            font-size: 12px;
+            color: var(--text-3);
+            padding-left: 15px;
+        }
+
+        .patch-list div {
+            margin-bottom: 3px;
+        }
+
+        .patch-list div::before {
+            content: "├─ ";
+            color: var(--border-light);
+        }
+
+        .patch-list div:last-child::before {
+            content: "└─ ";
+        }
+
+        .show-more-patches {
+            margin-top: 15px;
+        }
+
+        /* Reviews */
+        .review {
+            border: 1px solid;
+            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .review-thumb {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .review-thumb.up {
+            background: #4a5942;
+            border: 1px solid var(--accent);
+        }
+
+        .review-thumb.down {
+            background: #594242;
+            border: 1px solid #c55050;
+        }
+
+        .review-rec {
+            font-size: 14px;
+        }
+
+        .review-rec.positive {
+            color: var(--accent);
+        }
+
+        .review-rec.negative {
+            color: #c55050;
+        }
+
+        .review-hours {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-left: auto;
+        }
+
+        .review-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        .review-helpful {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-dark);
+        }
+
+        .helpful-text {
+            font-size: 11px;
+            color: var(--text-3);
+        }
+
+        .helpful-votes {
+            font-size: 11px;
+            color: var(--text-3);
+            margin-left: auto;
+        }
+
+        .dev-response {
+            background: var(--secondary-bg);
+            border-left: 3px solid var(--accent);
+            padding: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .dev-response.visible {
+            display: block;
+        }
+
+        .dev-response-header {
+            color: var(--accent);
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .dev-response-text {
+            font-size: 12px;
+            color: var(--text-3);
+            font-style: italic;
+        }
+
+        .dev-response-text p {
+            margin-bottom: 8px;
+        }
+
+        .dev-signature {
+            color: var(--accent);
+            margin-top: 10px;
+        }
+
+        /* Community hub */
+        .discussion {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-dark);
+            font-size: 12px;
+        }
+
+        .discussion:last-child {
+            border-bottom: none;
+        }
+
+        .discussion-icon {
+            margin-right: 5px;
+        }
+
+        .discussion-title {
+            color: var(--text);
+        }
+
+        .discussion-meta {
+            color: var(--text-3);
+            font-size: 11px;
+            margin-left: 20px;
+        }
+
+        /* Footer */
+        .store-footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            border-top: 1px solid var(--border-dark);
+            font-size: 11px;
+            color: var(--text-3);
+        }
+
+        .store-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .store-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Easter egg hint */
+        .easter-egg-hint {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 10px;
+            color: var(--border-dark);
+        }
+
+        .easter-egg-hint:hover {
+            color: var(--text-3);
+        }
+
+        /* Vote count animation */
+        .vote-count.absurd {
+            animation: rainbow 2s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { color: #ff0000; }
+            16% { color: #ff8800; }
+            33% { color: #ffff00; }
+            50% { color: #00ff00; }
+            66% { color: #0088ff; }
+            83% { color: #8800ff; }
+            100% { color: #ff0000; }
+        }
+
+        /* Hidden patches */
+        .early-patches {
+            display: none;
+        }
+
+        .early-patches.visible {
+            display: block;
+        }
+
+        /* Awards */
+        .awards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .award {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-dark);
+            padding: 8px 12px;
+            font-size: 11px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .award-icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .award-name {
+            color: var(--accent);
+            font-size: 10px;
+        }
+
+        /* Screenshots carousel */
+        .screenshot-main {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-dark);
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .screenshot-main-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .screenshot-main-text {
+            font-size: 14px;
+            color: var(--text-3);
+        }
+
+        .screenshot-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg);
+            border: 1px solid var(--border-dark);
+            color: var(--text);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .screenshot-nav:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .screenshot-nav.prev {
+            left: 10px;
+        }
+
+        .screenshot-nav.next {
+            right: 10px;
+        }
+
+        .screenshot-thumbnails {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .screenshot-thumb {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-dark);
+            width: 60px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0.5;
+        }
+
+        .screenshot-thumb:hover,
+        .screenshot-thumb.active {
+            border-color: var(--accent);
+            opacity: 1;
+        }
+
+        /* Similar games */
+        .similar-games {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .similar-game {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-dark);
+            padding: 10px;
+            min-width: 120px;
+            max-width: 120px;
+            text-align: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .similar-game:hover {
+            border-color: var(--accent);
+        }
+
+        .similar-game-icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .similar-game-title {
+            color: #fff;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .similar-game-tags {
+            font-size: 10px;
+            color: var(--text-3);
+        }
+
+        /* Curator reviews */
+        .curator {
+            display: flex;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .curator:last-child {
+            border-bottom: none;
+        }
+
+        .curator-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .curator-info {
+            flex: 1;
+        }
+
+        .curator-name {
+            color: var(--accent);
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+
+        .curator-text {
+            font-size: 11px;
+            color: var(--text-3);
+        }
+
+        .curator-followers {
+            font-size: 10px;
+            color: var(--text-3);
+            margin-top: 3px;
+        }
+
+        /* News */
+        .news-item {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-dark);
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-date {
+            font-size: 10px;
+            color: var(--text-3);
+            margin-bottom: 3px;
+        }
+
+        .news-title {
+            color: #fff;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .news-text {
+            font-size: 11px;
+            color: var(--text-3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .store-main {
+                flex-direction: column;
+            }
+
+            .store-sidebar {
+                width: 100%;
+            }
+
+            .sys-req {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="store-container">
+        <!-- Header -->
+        <div class="store-header">
+            <div class="game-title">A███: The Complete Experience</div>
+            <div class="game-tagline">An open-world life simulator with no visible energy bar.</div>
+            <div class="tags">
+                <span class="tag" title="Realistic energy management">Life Sim</span>
+                <span class="tag" title="Executive dysfunction enabled">Difficult</span>
+                <span class="tag" title="No co-op mode (yet)">Single Player</span>
+                <span class="tag" title="Feature, not bug">ADHD</span>
+                <span class="tag" title="Backstory heavy">Emotional Damage</span>
+                <span class="tag" title="Years of journals">Story Rich</span>
+                <span class="tag" title="Illusion of choice">Choose Your Own Adventure</span>
+                <span class="tag" title="Still being developed">Early Access</span>
+                <span class="tag" title="Peak performance: 2-6am">Nocturnal</span>
+            </div>
+            <div class="game-meta">
+                <span>Release Date: November 30, 1992</span>
+                <span>Developer: Nocturnal Scavenger Studios</span>
+                <span>Publisher: RNG Entertainment</span>
+            </div>
+            <div class="review-summary" id="review-summary" title="One for each year">
+                Mostly Positive (67% of 33 reviews)
+            </div>
+            <div class="awards">
+                <div class="award">
+                    <span class="award-icon">🦉</span>
+                    <span class="award-name">Most Hours at 2am</span>
+                </div>
+                <div class="award">
+                    <span class="award-icon">💔</span>
+                    <span class="award-name">Survived 2018</span>
+                </div>
+                <div class="award">
+                    <span class="award-icon">📧</span>
+                    <span class="award-name">One Message</span>
+                </div>
+                <div class="award">
+                    <span class="award-icon">🔍</span>
+                    <span class="award-name">Pattern Recognition</span>
+                </div>
+                <div class="award">
+                    <span class="award-icon">🦝</span>
+                    <span class="award-name">Best Friendship</span>
+                </div>
+                <div class="award">
+                    <span class="award-icon">🐕</span>
+                    <span class="award-name">Best Companion</span>
+                </div>
+                <div class="award">
+                    <span class="award-icon">✈️</span>
+                    <span class="award-name">Solo Operations</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="store-main">
+            <!-- Content area -->
+            <div class="store-content">
+                <!-- Tabs -->
+                <div class="cs-tabs">
+                    <input class="radiotab" name="tabs" tabindex="1" type="radio" id="tab-store" checked>
+                    <label class="label" for="tab-store">Store</label>
+                    <div class="panel">
+                        <!-- About This Game -->
+                        <div class="section-box">
+                            <div class="section-title">ABOUT THIS GAME</div>
+                            <div class="section-content">
+                                <p><strong>A███: The Complete Experience</strong> is an open-world life simulator where you don't choose your starting stats, can't see your energy bar, and the sleep schedule system has been broken since launch.</p>
+
+                                <p>Set in the Prague metropolitan area, you'll navigate a world where the main quest is unclear, side quests constantly interrupt each other, and some of the best loot comes from the worst days.</p>
+
+                                <button class="cs-btn" id="read-more-btn" onclick="document.getElementById('extended-desc').style.display='block'; this.style.display='none';">Read More</button>
+
+                                <div id="extended-desc" style="display: none;">
+                                    <p>Starting from a small tutorial zone you never chose, work your way through a series of guilds (some toxic, some not), relationship arcs (some bugged, most confusing), and personal revelations that rewrite your understanding of the main storyline.</p>
+
+                                    <p>Key mechanics include:</p>
+                                    <ul style="margin: 10px 0; padding-left: 20px;">
+                                        <li><strong>No visible stats</strong> - Energy, motivation, and social capacity are hidden. Learn to read the signs or fail repeatedly.</li>
+                                        <li><strong>Unreliable fast travel</strong> - Sometimes you can do things. Sometimes you can't. The game won't tell you why.</li>
+                                        <li><strong>Persistent world</strong> - Choices have consequences that echo across patches. Some NPCs remember everything.</li>
+                                        <li><strong>Hidden lore</strong> - Major plot revelations can drop at any time, even 30+ years into a playthrough.</li>
+                                    </ul>
+
+                                    <p>Critics have called it "frustrating," "poorly balanced," and "why would anyone play this." Players who persist report unexpected moments of genuine connection, hard-won achievements, and the occasional legendary drop that makes it all worth it.</p>
+
+                                    <p><em>Note: This is not a power fantasy. You will lose inventory. You will fail quests. You will spend hours on tasks that yield nothing. But you might also find something worth keeping.</em></p>
+                                </div>
+
+                                <div class="section-title" style="margin-top: 20px;">FEATURES</div>
+                                <ul class="feature-list">
+                                    <li>
+                                        <span class="feature-title">Hidden Stats System</span>
+                                        Energy, motivation, and social capacity exist but aren't visible. Learn to read subtle signals or discover your limits the hard way.
+                                    </li>
+                                    <li>
+                                        <span class="feature-title">Hyperfocus Mode</span>
+                                        Randomly triggers on side quests. Grants 12+ hours of uninterrupted productivity. Cannot be activated manually. Main quests ineligible.
+                                    </li>
+                                    <li>
+                                        <span class="feature-title">2AM Productivity Window</span>
+                                        Peak performance unlocks between midnight and 6am. Daytime efficiency sold separately (see: Sleep Schedule DLC - Coming Soon™).
+                                    </li>
+                                    <li>
+                                        <span class="feature-title">Fog of War Exploration</span>
+                                        Map starts hidden. Walking reveals tiles. Discovering new locations grants small permanent buffs to decision-making.
+                                    </li>
+                                    <li>
+                                        <span class="feature-title">Social Battery Management</span>
+                                        Finite resource. Some NPCs drain it. Others recharge it. Learn the difference before it's empty.
+                                    </li>
+                                    <li>
+                                        <span class="feature-title">Complex NPC Relationships</span>
+                                        NPCs have their own agendas. Some become legendary allies. Others betray you in ways you won't see coming. A few disappear without explanation.
+                                    </li>
+                                    <li>
+                                        <span class="feature-title">Guild System</span>
+                                        Join guilds (jobs) for resources and structure. Warning: Toxic leadership is common. Exit strategies recommended.
+                                    </li>
+                                    <li>
+                                        <span class="feature-title">Dog Companion</span>
+                                        M████ grants routine anchoring (+100), outdoor time enforcement, and social buffs at taverns. Non-optional. Best drop in the game.
+                                    </li>
+                                    <li>
+                                        <span class="feature-title">Pattern Recognition Tree</span>
+                                        Years of journaling unlock the ability to see your own loops. Warning: Seeing the pattern doesn't mean you can break it.
+                                    </li>
+                                    <li>
+                                        <span class="feature-title">Memory Fragmentation</span>
+                                        Working memory is limited. External storage systems (vaults, lists, notes) required for complex quest tracking. No autosave.
+                                    </li>
+                                </ul>
+
+                                <div class="content-warning">
+                                    <strong>CONTENT WARNING:</strong> Contains grief, family secrets, executive dysfunction, situationships, healthcare bureaucracy, and scenes some players may find relatable.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Screenshots -->
+                        <div class="section-box">
+                            <div class="section-title">SCREENSHOTS</div>
+                            <div class="screenshot-carousel" id="screenshot-carousel">
+                                <div class="screenshot-main" id="screenshot-main">
+                                    <div class="screenshot-nav prev" id="screenshot-prev">◀</div>
+                                    <div class="screenshot-main-icon" id="screenshot-icon">🖼️</div>
+                                    <div class="screenshot-main-text" id="screenshot-text">Coming in a future update</div>
+                                    <div class="screenshot-nav next" id="screenshot-next">▶</div>
+                                </div>
+                                <div class="screenshot-thumbnails">
+                                    <div class="screenshot-thumb active" data-index="0">🖼️</div>
+                                    <div class="screenshot-thumb" data-index="1">⏳</div>
+                                    <div class="screenshot-thumb" data-index="2">🔧</div>
+                                    <div class="screenshot-thumb" data-index="3">💤</div>
+                                    <div class="screenshot-thumb" data-index="4">🦝</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Requirements -->
+                        <div class="section-box">
+                            <div class="section-title">SYSTEM REQUIREMENTS</div>
+                            <div class="sys-req">
+                                <div class="sys-req-col">
+                                    <div class="sys-req-title">MINIMUM:</div>
+                                    <div class="sys-req-list">
+                                        <div>OS: Post-2019 (apartment acquired)</div>
+                                        <div>Processor: ADHD (unmedicated)</div>
+                                        <div>Memory: Unreliable (working memory issues)</div>
+                                        <div>Storage: One Obsidian vault, infinite journals</div>
+                                        <div>Therapy: Recommended but not required</div>
+                                        <div>Network: Broadband (for delivery apps)</div>
+                                    </div>
+                                </div>
+                                <div class="sys-req-col">
+                                    <div class="sys-req-title">RECOMMENDED:</div>
+                                    <div class="sys-req-list">
+                                        <div>OS: Post-2025 (medication patch)</div>
+                                        <div>Processor: ADHD (medicated)</div>
+                                        <div>Memory: Supplemented with external systems</div>
+                                        <div>Graphics: Prague in summer</div>
+                                        <div>Therapy: Active, weekly sessions</div>
+                                        <div>Support: One legendary friendship (2x/week)</div>
+                                        <div>Network: Fiber (for 2am hyperfocus sessions)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sys-note">
+                                • Dog companion required for optimal experience<br>
+                                • Sleep schedule DLC perpetually broken<br>
+                                • Czech language pack helpful but English supported<br>
+                                • Warning: Returning to tutorial zone may trigger dissociation events
+                            </div>
+                        </div>
+
+                        <!-- Community Hub -->
+                        <div class="section-box">
+                            <div class="section-title">COMMUNITY HUB</div>
+                            <div class="discussion">
+                                <span class="discussion-icon">📌</span>
+                                <span class="discussion-title">[PINNED] FAQ: Yes, the sleep schedule is broken</span>
+                                <div class="discussion-meta">Last post: 47 minutes ago (it's 3am)</div>
+                            </div>
+                            <div class="discussion">
+                                <span class="discussion-icon">🔥</span>
+                                <span class="discussion-title">Anyone else stuck on the Apartment Cleaning quest?</span>
+                                <div class="discussion-meta">"I have the supplies, I see the mess, I just can't..." · Replies: 847</div>
+                            </div>
+                            <div class="discussion">
+                                <span class="discussion-icon">💬</span>
+                                <span class="discussion-title">PSA: The 2am productivity burst is NOT a bug</span>
+                                <div class="discussion-meta">"It's a feature. Plan around it." · Replies: 234</div>
+                            </div>
+                            <div class="discussion">
+                                <span class="discussion-icon">💬</span>
+                                <span class="discussion-title">Relationship questline keeps soft-locking?</span>
+                                <div class="discussion-meta">"Third time this has happened. Anyone got a fix?" · Replies: 156</div>
+                            </div>
+                            <div class="discussion">
+                                <span class="discussion-icon">💬</span>
+                                <span class="discussion-title">Unpopular opinion: the dog companion is mandatory</span>
+                                <div class="discussion-meta">"Literally can't function without the walk timer" · Replies: 42</div>
+                            </div>
+                        </div>
+
+                        <!-- Curator Reviews -->
+                        <div class="section-box">
+                            <div class="section-title">CURATOR REVIEWS</div>
+                            <div class="curator">
+                                <div class="curator-icon">🧠</div>
+                                <div class="curator-info">
+                                    <div class="curator-name">Neurodivergent Gaming</div>
+                                    <div class="curator-text">"Finally, accurate ADHD representation. The executive dysfunction mechanics are painfully realistic. 10/10 would hyperfocus again."</div>
+                                    <div class="curator-followers">2,847 followers</div>
+                                </div>
+                            </div>
+                            <div class="curator">
+                                <div class="curator-icon">🏙️</div>
+                                <div class="curator-info">
+                                    <div class="curator-name">Prague Indie Scene</div>
+                                    <div class="curator-text">"The Prague map is incredibly detailed. Every café has been researched. The Fog of World integration is chef's kiss."</div>
+                                    <div class="curator-followers">1,203 followers</div>
+                                </div>
+                            </div>
+                            <div class="curator">
+                                <div class="curator-icon">💤</div>
+                                <div class="curator-info">
+                                    <div class="curator-name">Night Owl Reviews</div>
+                                    <div class="curator-text">"The 2am productivity system is not a bug, it's a feature. This game understands us."</div>
+                                    <div class="curator-followers">4,521 followers</div>
+                                </div>
+                            </div>
+                            <div class="curator">
+                                <div class="curator-icon">🎮</div>
+                                <div class="curator-info">
+                                    <div class="curator-name">Games Industry Insider</div>
+                                    <div class="curator-text">"The Games Week side quest has genuine impact on the Czech games scene. Rare community-building mechanics."</div>
+                                    <div class="curator-followers">892 followers</div>
+                                </div>
+                            </div>
+                            <div class="curator">
+                                <div class="curator-icon">🦝</div>
+                                <div class="curator-info">
+                                    <div class="curator-name">Trash Panda Weekly</div>
+                                    <div class="curator-text">"This game gets it. Rummaging through old memories at 3am? Finding treasure in the garbage fire of your own experiences? We've never felt so seen."</div>
+                                    <div class="curator-followers">3,621 followers</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent News -->
+                        <div class="section-box">
+                            <div class="section-title">RECENT NEWS</div>
+                            <div class="news-item">
+                                <div class="news-date">June 2024</div>
+                                <div class="news-title">Players HATE This One Secret (Devs Hid It For Decades)</div>
+                                <div class="news-text">No one left to ask for answers. Community frustrated.</div>
+                            </div>
+                            <div class="news-item">
+                                <div class="news-date">April 2025</div>
+                                <div class="news-title">Patch v33.4: Confrontation System Finally Working</div>
+                                <div class="news-text">Player successfully removed hostile NPCs from venue. "I know what to do" moment confirmed.</div>
+                            </div>
+                            <div class="news-item">
+                                <div class="news-date">October 2022</div>
+                                <div class="news-title">Hotfix: Emergency Guild Change</div>
+                                <div class="news-text">Kicked from guild at 15:00. Met legendary NPC at 22:00. Same day.</div>
+                            </div>
+                            <div class="news-item">
+                                <div class="news-date">June 2015</div>
+                                <div class="news-title">One Email. 180,000 Viewers. Zero Recognition.</div>
+                                <div class="news-text">Lead developer still processing this ten years later.</div>
+                            </div>
+                            <div class="news-item">
+                                <div class="news-date">2014</div>
+                                <div class="news-title">[RESOLVED] Account Suspension Incident</div>
+                                <div class="news-text">Ban lifted after 24 hours. "Kid developer" label persists.</div>
+                            </div>
+                            <div class="news-item">
+                                <div class="news-date">November 2019</div>
+                                <div class="news-title">Patch Notes: Birthday Location Changed</div>
+                                <div class="news-text">For the first time, birthday event triggered outside home server. Three-week expedition concluded.</div>
+                            </div>
+                            <div class="news-item">
+                                <div class="news-date">April 2016</div>
+                                <div class="news-title">Solo Player Completes 4-Day Convention With No Party Members</div>
+                                <div class="news-text">Stamina depleted. Reputation gained. Sleep schedule destroyed.</div>
+                            </div>
+                        </div>
+
+                        <!-- Similar Games -->
+                        <div class="section-box">
+                            <div class="section-title">MORE LIKE THIS</div>
+                            <div class="similar-games">
+                                <div class="similar-game" onclick="alert('Not yet.')">
+                                    <div class="similar-game-icon">🦝</div>
+                                    <div class="similar-game-title">???</div>
+                                    <div class="similar-game-tags">Co-op, Persistence</div>
+                                </div>
+                                <div class="similar-game" onclick="alert('Not yet.')">
+                                    <div class="similar-game-icon">🏚️</div>
+                                    <div class="similar-game-title">???</div>
+                                    <div class="similar-game-tags">Escape, Origin</div>
+                                </div>
+                                <div class="similar-game" onclick="alert('Patience.')">
+                                    <div class="similar-game-icon">📧</div>
+                                    <div class="similar-game-title">???</div>
+                                    <div class="similar-game-tags">One Action, No Recognition</div>
+                                </div>
+                                <div class="similar-game" onclick="alert('Eventually.')">
+                                    <div class="similar-game-icon">🍺</div>
+                                    <div class="similar-game-title">???</div>
+                                    <div class="similar-game-tags">Loop, Exit?</div>
+                                </div>
+                                <div class="similar-game" onclick="alert('Not yet.')">
+                                    <div class="similar-game-icon">🕯️</div>
+                                    <div class="similar-game-title">???</div>
+                                    <div class="similar-game-tags">Walking, Absence</div>
+                                </div>
+                                <div class="similar-game" onclick="alert('Patience.')">
+                                    <div class="similar-game-icon">🏥</div>
+                                    <div class="similar-game-title">???</div>
+                                    <div class="similar-game-tags">Bureaucracy, Waiting</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input class="radiotab" name="tabs" tabindex="2" type="radio" id="tab-reviews">
+                    <label class="label" for="tab-reviews">Reviews</label>
+                    <div class="panel">
+                        <!-- Main Review -->
+                        <div class="review" id="main-review">
+                            <div class="review-header">
+                                <div class="review-thumb up">👍</div>
+                                <span class="review-rec positive">Recommended</span>
+                                <span class="review-hours">33.0 years on record</span>
+                            </div>
+                            <div class="review-text">
+                                Started in B██████ on a pretty unbalanced server - tutorial section was rough with bugged parental units and hidden lore that only unlocked decades later. Devs really buried some stuff deep in the codebase.<br><br>
+
+                                <strong style="color: var(--accent);">Pros:</strong><br>
+                                • Excellent pattern recognition skill tree<br>
+                                • Dog companion (M████) is OP for routine anchoring<br>
+                                • Prague map is gorgeous, especially the café locations<br>
+                                • Side quest "Games Week" has genuine community impact<br>
+                                • Name customization finally patched in at v29.6 (June 2022)<br>
+                                • Therapy DLC worth the investment<br>
+                                • The E██████ friendship is a rare legendary drop - complete platonic love bond with 2x/week spawn rate<br><br>
+
+                                <strong style="color: #c55050;">Cons:</strong><br>
+                                • Sleep schedule system is completely broken, devs won't fix<br>
+                                • Executive dysfunction debuff stacks way too aggressively<br>
+                                • Energy meter is RNG-based with no visible indicator<br>
+                                • Relationship questlines keep soft-locking<br>
+                                • Apartment cleaning minigame has been bugged since 2019<br>
+                                • The "grocery shopping" mission triggers panic debuff even in co-op mode<br><br>
+
+                                <strong style="color: var(--text-3);">Known bugs:</strong><br>
+                                • 2am cleaning bursts - intended feature or memory leak?<br>
+                                • Bar K████████ continuation loop needs a hard exit option<br>
+                                • "Just one more drink" has no cooldown timer<br><br>
+
+                                <span style="color: var(--accent); font-size: 16px; cursor: pointer;" id="rating" title="Click for secret">8/10</span> - Still playing despite the bugs. The 2am productivity sessions hit different.
+                            </div>
+                            <div class="review-helpful">
+                                <span class="helpful-text">Was this review helpful?</span>
+                                <button class="cs-btn" id="upvote">👍 Yes</button>
+                                <button class="cs-btn" id="downvote">👎 No</button>
+                                <span class="helpful-votes">👍 <span class="vote-count" id="upvote-count">69</span> 👎 0</span>
+                            </div>
+                            <div class="dev-response" id="dev-response">
+                                <div class="dev-response-header">Developer Response:</div>
+                                <div class="dev-response-text">
+                                    <p>We appreciate the feedback. The sleep schedule issue is a known limitation of the underlying architecture and would require a complete rebuild. We're monitoring the situation.</p>
+                                    <p>The hidden lore was always in the codebase - we're surprised it took that many versions for the player to discover it. Working as intended.</p>
+                                    <p>Regarding the ADHD diagnosis questline: we've heard your concerns about the "skill issue" resolution. A medication patch is currently in beta testing.</p>
+                                    <p>Thank you for continuing to play despite the bugs.</p>
+                                </div>
+                                <div class="dev-signature">- The Management</div>
+                            </div>
+                        </div>
+
+                        <!-- The Anchor Review -->
+                        <div class="review">
+                            <div class="review-header">
+                                <div class="review-thumb up">👍</div>
+                                <span class="review-rec positive">Recommended</span>
+                                <span class="review-hours">2.5 years on record (ongoing)</span>
+                            </div>
+                            <div class="review-text">
+                                I can't fix any of the bugs. I've tried. The sleep schedule is broken, the executive function module crashes constantly, and the apartment cleaning quest has been stuck at 0% for years.<br><br>
+
+                                But here's the thing - I don't think that's my job.<br><br>
+
+                                I show up twice a week. We do the shopping quest together (it's easier in co-op). We sit in the same café. Sometimes we don't even talk that much. That's fine.<br><br>
+
+                                The devs made this one persistent. I'm not going anywhere.<br><br>
+
+                                Would recommend if you have the patience stat maxed out.
+                            </div>
+                            <div class="review-helpful">
+                                <span class="helpful-votes">👍 ███ 👎 0</span>
+                            </div>
+                        </div>
+
+                        <!-- The Blocked Review -->
+                        <div class="review">
+                            <div class="review-header">
+                                <div class="review-thumb down">👎</div>
+                                <span class="review-rec negative">Not Recommended</span>
+                                <span class="review-hours">Connection terminated</span>
+                            </div>
+                            <div class="review-text">
+                                Look, I don't think I did anything wrong.<br><br>
+
+                                People make choices. I made mine. They made theirs. I tried to explain my perspective and suddenly I'm the villain? I wrote a whole message trying to smooth things over and they didn't even engage with it properly.<br><br>
+
+                                Blocked. With a sticker. Very mature.<br><br>
+
+                                I think some players just can't handle complexity. Not everything is black and white. I had my reasons. But sure, I'm the bad guy now. Fine.<br><br>
+
+                                Not recommending because apparently honesty isn't valued in this community.
+                            </div>
+                            <div class="review-helpful">
+                                <span class="helpful-votes">👍 3 👎 ███</span>
+                            </div>
+                        </div>
+
+                        <!-- The Secret Keeper Review -->
+                        <div class="review">
+                            <div class="review-header">
+                                <div class="review-thumb up">👍</div>
+                                <span class="review-rec positive">Recommended</span>
+                                <span class="review-hours">Decades holding</span>
+                            </div>
+                            <div class="review-text">
+                                I carried something for a long time. Not mine to carry, but I had it anyway.<br><br>
+
+                                Every year I thought about letting go. Every milestone. Every quiet moment where it almost came out. I held it because someone asked me to. I held it because I didn't know what would happen if I didn't.<br><br>
+
+                                When I finally let go, I thought it would feel like relief. It did, partially. But also: their face. The questions I couldn't answer. The silence after.<br><br>
+
+                                I don't know if unburdening yourself is always a gift to others. Sometimes the weight just transfers.<br><br>
+
+                                Recommending because I can breathe now. Not sure about the rest.
+                            </div>
+                            <div class="review-helpful">
+                                <span class="helpful-votes">👍 ? 👎 ?</span>
+                            </div>
+                        </div>
+
+                        <!-- Negative Review -->
+                        <div class="review">
+                            <div class="review-header">
+                                <div class="review-thumb down">👎</div>
+                                <span class="review-rec negative">Not Recommended</span>
+                                <span class="review-hours">43 minutes on record</span>
+                            </div>
+                            <div class="review-text">
+                                I don't think this game has ADHD. Have you tried sports? It can't be hard to clean the apartment, just do it.
+                            </div>
+                            <div class="dev-response visible">
+                                <div class="dev-response-header">Developer Response:</div>
+                                <div class="dev-response-text">
+                                    <p>Thank you for your feedback. Your review has been marked as "skill issue."</p>
+                                </div>
+                            </div>
+                            <div class="review-helpful">
+                                <span class="helpful-votes">👍 0 👎 247</span>
+                            </div>
+                        </div>
+
+                        <!-- The Notes Review -->
+                        <div class="review">
+                            <div class="review-header">
+                                <div class="review-thumb up">👍</div>
+                                <span class="review-rec positive">Recommended</span>
+                                <span class="review-hours">Professional capacity only</span>
+                            </div>
+                            <div class="review-text">
+                                <em>Session notes, anonymized:</em><br><br>
+
+                                Week 1: New client. Complex presentation. Sleep architecture non-functional. Insight: developing.<br><br>
+
+                                Week 12: Beginning to recognize patterns independently. Still resistant to the obvious ones.<br><br>
+
+                                Week 31: Breakthrough re: relationship dynamics. Client correctly identified manipulation. I used the clinical term "cretin" (appropriate in context).<br><br>
+
+                                Week 47: Progress stable. Executive function remains challenging but coping strategies improving. Client has started asking interesting questions in group setting.<br><br>
+
+                                Ongoing: Recommended. Prognosis: Cautiously optimistic. The architecture is sound. Just needs maintenance.
+                            </div>
+                            <div class="review-helpful">
+                                <span class="helpful-votes">👍 38 👎 0</span>
+                            </div>
+                        </div>
+
+                        <!-- The Remote Review -->
+                        <div class="review">
+                            <div class="review-header">
+                                <div class="review-thumb up">👍</div>
+                                <span class="review-rec positive">Recommended</span>
+                                <span class="review-hours">Different timezone now</span>
+                            </div>
+                            <div class="review-text">
+                                I moved servers. We still talk but it's not the same as being in the same instance.<br><br>
+
+                                I remember the co-op days. The daily sidequests. The panic at the grocery store that was somehow easier together. Three weeks in another country, different rules, felt like a different game entirely.<br><br>
+
+                                The video calls help. But there's lag. Always lag.<br><br>
+
+                                Recommending because some connections persist across distance. Even if it hurts.
+                            </div>
+                            <div class="review-helpful">
+                                <span class="helpful-votes">👍 27 👎 0</span>
+                            </div>
+                        </div>
+
+                        <!-- AI Review -->
+                        <div class="review">
+                            <div class="review-header">
+                                <div class="review-thumb down">👎</div>
+                                <span class="review-rec negative">Not Recommended</span>
+                                <span class="review-hours">AI-generated review</span>
+                            </div>
+                            <div class="review-text">
+                                Your message was rude and disrespectful. I recommend sleeping on it. There's scientific evidence that sleeping on big decisions helps. I mean that as a friend.
+                            </div>
+                            <div class="review-helpful">
+                                <span class="helpful-votes">👍 0 👎 ∞</span>
+                            </div>
+                        </div>
+
+                        <!-- The Coworker Review -->
+                        <div class="review">
+                            <div class="review-header">
+                                <div class="review-thumb up">👍</div>
+                                <span class="review-rec positive">Recommended</span>
+                                <span class="review-hours">Same guild, different timezone</span>
+                            </div>
+                            <div class="review-text">
+                                I notice things.<br><br>
+
+                                The messages come at strange hours. 3am commits. 4am Slack. Then nothing until late afternoon. The productivity spikes are real - when they're in the zone, the output is genuinely impressive.<br><br>
+
+                                But there are days where... I don't know. Something's off. The energy isn't there. I want to say something but what do you even say? "Hey, I noticed you seem to be struggling with basic existence"?<br><br>
+
+                                I just try to be flexible when I can. Hope that helps somehow.<br><br>
+
+                                Recommending because the work is good when it's good. The rest isn't really my place to review.
+                            </div>
+                            <div class="review-helpful">
+                                <span class="helpful-votes">👍 12 👎 0</span>
+                            </div>
+                        </div>
+
+                        <!-- Dog Review -->
+                        <div class="review">
+                            <div class="review-header">
+                                <div class="review-thumb up">👍</div>
+                                <span class="review-rec positive">Recommended</span>
+                                <span class="review-hours">Perspective: M████ (Dog)</span>
+                            </div>
+                            <div class="review-text">
+                                walk walk walk walk walk walk walk walk food walk sleep walk walk walk walk walk human sad but human good. walk?
+                            </div>
+                            <div class="review-helpful">
+                                <span class="helpful-votes" id="dog-review-votes">👍 <span id="dog-votes">100</span> 👎 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input class="radiotab" name="tabs" tabindex="3" type="radio" id="tab-patches">
+                    <label class="label" for="tab-patches">Patches</label>
+                    <div class="panel">
+                        <div class="section-box">
+                            <div class="section-title">UPDATE HISTORY</div>
+
+                            <div class="patch">
+                                <div class="patch-version">v33.0 (November 2025)</div>
+                                <div class="patch-list">
+                                    <div>Achievement unlocked: STANDING UP - hostile NPCs removed from venue</div>
+                                    <div>Confrontation skill tree now fully specced</div>
+                                    <div>New inventory system: Personal vault (external memory expansion)</div>
+                                    <div>Preventive defense buffs applied</div>
+                                    <div>Netherlands expedition completed (13 days, multi-city raid)</div>
+                                    <div>Alternative character skins discovered (server compatibility varies)</div>
+                                    <div>Annual performance review: Survived (barely)</div>
+                                    <div>Relationship status updated: undefined -> null</div>
+                                    <div>Creative project spawned: Blog instance with procedural audio</div>
+                                    <div>Sleep schedule regression: Now averaging 6-7am logout time</div>
+                                    <div>Holiday event: Solo mode re-enabled (v32 fix reverted)</div>
+                                </div>
+                            </div>
+
+                            <div class="patch">
+                                <div class="patch-version">v32.0 (November 2024)</div>
+                                <div class="patch-list">
+                                    <div>Co-op partner disconnected (long-distance desync error)</div>
+                                    <div>Hidden lore discovered: Family tree data corrupted since v0.0</div>
+                                    <div>Diagnosis questline completed - result: "skill issue"</div>
+                                    <div>Hostile NPC banned from community hub (player-initiated)</div>
+                                    <div>New fast travel point unlocked: Vienna</div>
+                                    <div>Bugfix: Christmas no longer forces solo mode</div>
+                                </div>
+                            </div>
+
+                            <div class="patch">
+                                <div class="patch-version">v31.0 (November 2023)</div>
+                                <div class="patch-list">
+                                    <div>Party member joined... party member denied ever joining [duration: 2.5 weeks]</div>
+                                    <div>Mood stabilization patch applied</div>
+                                    <div>Group therapy raid unlocked</div>
+                                    <div>Public speaking feat acquired</div>
+                                    <div>Inventory lost: Phone, wallet, keys (drunk debuff active)</div>
+                                    <div>Bug: Relationship status returns undefined</div>
+                                </div>
+                            </div>
+
+                            <div class="patch">
+                                <div class="patch-version">v30.0 (November 2022)</div>
+                                <div class="patch-list">
+                                    <div>Guild change: Left toxic guild after 9 years</div>
+                                    <div>Guild change: Kicked from new guild after 3 months</div>
+                                    <div>Guild change: Found good guild (finally)</div>
+                                    <div>Legendary drop acquired (2x/week spawn rate)</div>
+                                    <div>Character rename approved - display name updated</div>
+                                    <div>Level 30 milestone reached</div>
+                                    <div>Pattern recognition: Hidden debuff identified (ADHD)</div>
+                                </div>
+                            </div>
+
+                            <div class="patch">
+                                <div class="patch-version">v29.0 (November 2021)</div>
+                                <div class="patch-list">
+                                    <div>Character rename questline initiated</div>
+                                    <div>Producer role revoked (burnout event triggered)</div>
+                                    <div>Allied player relocated to Greece server - party size reduced</div>
+                                    <div>Diplomatic mission completed: Turkey (games ambassador)</div>
+                                    <div>Community event organized: Games Week II</div>
+                                    <div>Warning: Alcohol debuff becoming persistent</div>
+                                </div>
+                            </div>
+
+                            <button class="cs-btn show-more-patches" id="show-patches">Show Earlier Patches</button>
+
+                            <div class="early-patches" id="early-patches">
+                                <div class="patch">
+                                    <div class="patch-version">v28.0 (November 2020)</div>
+                                    <div class="patch-list">
+                                        <div>Global event: PANDEMIC - all players forced to home instance</div>
+                                        <div>Community event organized: Games Week I</div>
+                                        <div>Toxic party member removed from contacts list</div>
+                                        <div>Producer role granted (no official announcement)</div>
+                                        <div>Warning: Alcohol consumption exceeding recommended levels</div>
+                                    </div>
+                                </div>
+
+                                <div class="patch">
+                                    <div class="patch-version">v27.0 (November 2019)</div>
+                                    <div class="patch-list">
+                                        <div>Companion acquired: M████ (routine anchoring +100)</div>
+                                        <div>New home instance unlocked (current)</div>
+                                        <div>Achievement unlocked: Japan expedition (3 weeks, 7 cities)</div>
+                                        <div>Character customization: Non-binary flag equipped</div>
+                                        <div>Romance arc initiated (known bug: will cause issues)</div>
+                                    </div>
+                                </div>
+
+                                <div class="patch">
+                                    <div class="patch-version">v26.0 (November 2018)</div>
+                                    <div class="patch-list">
+                                        <div>CRITICAL: Core NPC permanently offline (no save point)</div>
+                                        <div>Emergency guild exit triggered (same day)</div>
+                                        <div>Rejoined previous guild</div>
+                                        <div>Grief processing module activated</div>
+                                        <div>[This was the worst patch]</div>
+                                    </div>
+                                </div>
+
+                                <div class="patch">
+                                    <div class="patch-version">v25.0 (November 2017)</div>
+                                    <div class="patch-list">
+                                        <div>Guild change: Remote work protocol enabled</div>
+                                        <div>Southeast Asia server tourism (2 months)</div>
+                                        <div>Warning: Burnout accumulating from previous guild</div>
+                                    </div>
+                                </div>
+
+                                <div class="patch">
+                                    <div class="patch-version">v24.0 (November 2016)</div>
+                                    <div class="patch-list">
+                                        <div>Cohabitation experiment terminated</div>
+                                        <div>Solo raid completed: PAX East booth (4 days, 0 backup)</div>
+                                        <div>Public speaking feat unlocked</div>
+                                    </div>
+                                </div>
+
+                                <div class="patch">
+                                    <div class="patch-version">v23.0 (November 2015)</div>
+                                    <div class="patch-list">
+                                        <div>Romance system activated for first time</div>
+                                        <div>Achievement unlocked: Got game to E3 with one email</div>
+                                        <div>180k concurrent viewers... guild leader didn't watch</div>
+                                        <div>Recognition stat remains at 0</div>
+                                    </div>
+                                </div>
+
+                                <div class="patch">
+                                    <div class="patch-version">v22.0 (November 2014)</div>
+                                    <div class="patch-list">
+                                        <div>Account suspended (duration: 24 hours)</div>
+                                        <div>"Kid developer" achievement unlocked</div>
+                                        <div>Mass media coverage acquired</div>
+                                        <div>Worth it</div>
+                                    </div>
+                                </div>
+
+                                <div class="patch">
+                                    <div class="patch-version">v21.0 (November 2013)</div>
+                                    <div class="patch-list">
+                                        <div>SERVER TRANSFER: Tutorial zone -> Prague</div>
+                                        <div>Escaped B██████ instance</div>
+                                        <div>First guild joined</div>
+                                        <div>New map region unlocked</div>
+                                        <div>Independence buff activated</div>
+                                    </div>
+                                </div>
+
+                                <div class="patch">
+                                    <div class="patch-version">v20.0 (November 2012)</div>
+                                    <div class="patch-list">
+                                        <div>Finals quest skipped -> built Steam tools instead</div>
+                                        <div>Hyperfocus ability discovered</div>
+                                        <div>First remote guild joined (still in tutorial zone)</div>
+                                        <div>Self-taught developer achievement unlocked</div>
+                                    </div>
+                                </div>
+
+                                <div class="patch">
+                                    <div class="patch-version">v0.0 (November 1992)</div>
+                                    <div class="patch-list">
+                                        <div>Initial release</div>
+                                        <div>Spawn point: B██████ (tutorial zone)</div>
+                                        <div>Starting stats: Unbalanced</div>
+                                        <div>Inherited code: Home instance visitor threshold set to unreachable</div>
+                                        <div>Hidden debuffs: [REDACTED - to be discovered]</div>
+                                        <div>Memory allocation: Fragmented (early game data partially corrupted)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input class="radiotab" name="tabs" tabindex="4" type="radio" id="tab-achievements">
+                    <label class="label" for="tab-achievements">Achievements</label>
+                    <div class="panel">
+                        <div class="section-box">
+                            <div class="section-title">ACHIEVEMENTS</div>
+
+                            <div class="achievements-divider">━━━ UNLOCKED ━━━</div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">🏠</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">FIRST STEPS</div>
+                                    <div class="achievement-desc">Escaped the tutorial area. Finally.</div>
+                                    <div class="achievement-date">Unlocked: October 2013</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">🔨</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">KID DEVELOPER</div>
+                                    <div class="achievement-desc">Banned for a day. Mass media coverage. Worth it.</div>
+                                    <div class="achievement-date">Unlocked: 2014</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">📧</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">ONE EMAIL</div>
+                                    <div class="achievement-desc">Changed everything. 180,000 watched. They didn't.</div>
+                                    <div class="achievement-date">Unlocked: June 2015</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">🎌</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">THREE WEEKS</div>
+                                    <div class="achievement-desc">Seven cities. Birthday abroad. The good year.</div>
+                                    <div class="achievement-date">Unlocked: November 2019</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">✨</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">NAME CUSTOMIZATION</div>
+                                    <div class="achievement-desc">Finally the right character model.</div>
+                                    <div class="achievement-date">Unlocked: June 2022</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">🦝</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">LEGENDARY DROP</div>
+                                    <div class="achievement-desc">2x/week spawn rate. Infinite duration.</div>
+                                    <div class="achievement-date">Unlocked: October 2022</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">💊</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">THE PILLS</div>
+                                    <div class="achievement-desc">Two prescriptions. One for the brain. One for the liver (never opened - still in the drawer somewhere).</div>
+                                    <div class="achievement-date">Unlocked: July 2023</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">👥</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">THE CIRCLE</div>
+                                    <div class="achievement-desc">Learned to listen. Talked about the dark.</div>
+                                    <div class="achievement-date">Unlocked: September 2023</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">🎤</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">THE SPEECH</div>
+                                    <div class="achievement-desc">They actually listened.</div>
+                                    <div class="achievement-date">Unlocked: December 2023</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">🧬</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">THE REVELATION</div>
+                                    <div class="achievement-desc">Hidden for decades. No one left to ask.</div>
+                                    <div class="achievement-date">Unlocked: June 2024</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">🩺</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">SKILL ISSUE</div>
+                                    <div class="achievement-desc">10.5 months for this?</div>
+                                    <div class="achievement-date">Unlocked: July 2024</div>
+                                </div>
+                            </div>
+
+                            <div class="achievement">
+                                <div class="achievement-icon">✊</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">STANDING UP</div>
+                                    <div class="achievement-desc">I know what to do.</div>
+                                    <div class="achievement-date">Unlocked: April 2025</div>
+                                </div>
+                            </div>
+
+                            <div class="achievements-divider">━━━ LOCKED ━━━</div>
+
+                            <div class="achievement" id="locked-1">
+                                <div class="achievement-icon locked">💊</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">THE MEDICATION PATCH</div>
+                                    <div class="achievement-desc">Start ADHD medication</div>
+                                    <div class="achievement-progress">
+                                        <div class="cs-progress-bar"><div class="bars" style="width: 5%;"></div></div>
+                                        <div class="progress-text">Progress: Blocked by "skill issue" diagnosis. Borrowed friend's meds once.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="achievement" id="locked-2">
+                                <div class="achievement-icon locked">🧹</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">THE CLEAN APARTMENT</div>
+                                    <div class="achievement-desc">Maintain cleanliness for 30 days</div>
+                                    <div class="achievement-progress">
+                                        <div class="cs-progress-bar"><div class="bars" style="width: 0%;"></div></div>
+                                        <div class="progress-text">Progress: 0/30 days (bugged since 2019)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="achievement" id="locked-3">
+                                <div class="achievement-icon locked">😴</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">REGULAR SLEEP SCHEDULE</div>
+                                    <div class="achievement-desc">Go to bed before midnight for 7 days</div>
+                                    <div class="achievement-progress">
+                                        <div class="cs-progress-bar"><div class="bars" style="width: 20%;"></div></div>
+                                        <div class="progress-text">Progress: Record: 2 days</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="achievement" id="locked-4">
+                                <div class="achievement-icon locked">🍳</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">HOME COOKING</div>
+                                    <div class="achievement-desc">Cook at home for 14 consecutive days</div>
+                                    <div class="achievement-progress">
+                                        <div class="cs-progress-bar"><div class="bars" style="width: 35%;"></div></div>
+                                        <div class="progress-text">Progress: Variable</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="achievement" id="locked-5">
+                                <div class="achievement-icon locked">🏠</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">MULTIPLAYER ENABLED</div>
+                                    <div class="achievement-desc">Host visitors in home instance</div>
+                                    <div class="achievement-progress">
+                                        <div class="cs-progress-bar"><div class="bars" style="width: 10%;"></div></div>
+                                        <div class="progress-text">Progress: Visitor threshold inherited from legacy code. Partially overwritten.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="achievement" id="locked-6">
+                                <div class="achievement-icon locked">⏪</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">THE EXCAVATION</div>
+                                    <div class="achievement-desc">Process early game data</div>
+                                    <div class="achievement-progress">
+                                        <div class="cs-progress-bar"><div class="bars" style="width: 5%;"></div></div>
+                                        <div class="progress-text">Progress: Forward-processing playstyle preferred. Some quests may require looking back.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="achievement" id="hidden-achievement" style="display: none;">
+                                <div class="achievement-icon">❓</div>
+                                <div class="achievement-info">
+                                    <div class="achievement-name">[REDACTED]</div>
+                                    <div class="achievement-desc">??? - "Some achievements stay hidden"</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="store-sidebar">
+                <div class="purchase-box">
+                    <div class="purchase-title">A███: The Complete Experience</div>
+                    <div class="price">Free to Play*</div>
+                    <div class="price-note">*Conditions apply. Energy costs variable.<br>Sleep schedule sold separately.</div>
+                    <button class="cs-btn play-btn" id="play-btn">PLAY GAME</button>
+
+                    <div class="dlc-section">
+                        <div class="dlc-title">DLC Available:</div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-therapy" checked disabled>
+                                <label class="cs-checkbox__label" for="dlc-therapy">Therapy Pack - $$$</label>
+                            </div>
+                            <div class="dlc-desc">"Weekly sessions. Worth every crown."</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-meds" disabled>
+                                <label class="cs-checkbox__label" for="dlc-meds">Medication Expansion - $$$</label>
+                            </div>
+                            <div class="dlc-desc">"Blocked by skill issue. Seeking private workaround."</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-name" checked disabled>
+                                <label class="cs-checkbox__label" for="dlc-name">Name Change DLC - FREE</label>
+                            </div>
+                            <div class="dlc-desc">"Finally customize your character" (after v29 update)</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-relationship" disabled>
+                                <label class="cs-checkbox__label" for="dlc-relationship">Relationship Season Pass - $$$</label>
+                            </div>
+                            <div class="dlc-desc">"Results may vary. No refunds."</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-dog" checked disabled>
+                                <label class="cs-checkbox__label" for="dlc-dog">Dog Companion Pack - FREE</label>
+                            </div>
+                            <div class="dlc-desc">"OP for routine anchoring. Mandatory daily walks included."</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-sleep" disabled>
+                                <label class="cs-checkbox__label" for="dlc-sleep">Sleep Schedule Fix - $$$</label>
+                            </div>
+                            <div class="dlc-desc">"Coming Soon™" (in development since 1992)</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-social" disabled>
+                                <label class="cs-checkbox__label" for="dlc-social">Social Battery Expansion - $$$</label>
+                            </div>
+                            <div class="dlc-desc">"Extend social capacity beyond 3 hours"</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-executive" disabled>
+                                <label class="cs-checkbox__label" for="dlc-executive">Executive Function Pack - $$$</label>
+                            </div>
+                            <div class="dlc-desc">"Start tasks without 2-hour warmup"</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-hyperfocus" checked disabled>
+                                <label class="cs-checkbox__label" for="dlc-hyperfocus">Hyperfocus Mode - FREE</label>
+                            </div>
+                            <div class="dlc-desc">"Included but activation is RNG-based"</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-distance" disabled>
+                                <label class="cs-checkbox__label" for="dlc-distance">The Distance Pack - $$$</label>
+                            </div>
+                            <div class="dlc-desc">"Historically unsuccessful. Keep trying anyway."</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-truth" disabled>
+                                <label class="cs-checkbox__label" for="dlc-truth">The Truth DLC - HIDDEN</label>
+                            </div>
+                            <div class="dlc-desc">"Unlocks at v31. No preparation possible."</div>
+                        </div>
+
+                        <div class="dlc-item">
+                            <div class="cs-checkbox">
+                                <input type="checkbox" id="dlc-morning" disabled>
+                                <label class="cs-checkbox__label" for="dlc-morning">The Morning Patch - $$$</label>
+                            </div>
+                            <div class="dlc-desc">"In development. Has been since v0.0."</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="store-footer">
+            © 2025 Nocturnal Scavenger Studios. All rights reserved.<br>
+            Life sold as-is. No refunds. Results may vary.<br>
+            Styled with <a href="https://cs16.samke.me">cs16.css</a><br><br>
+            <a href="/">raccoon.land</a> · <a href="/games/">games</a> · <a href="/about/">about</a>
+        </div>
+    </div>
+
+    <div class="easter-egg-hint" id="hint">try clicking things</div>
+
+    <script>
+        // Play button
+        document.getElementById('play-btn').addEventListener('click', () => {
+            alert('Error: Instance already running.\n\nCannot launch multiple instances of life.exe');
+        });
+
+        // Upvote counter (gets absurd)
+        let upvotes = 69;
+        const upvoteBtn = document.getElementById('upvote');
+        const upvoteCount = document.getElementById('upvote-count');
+
+        upvoteBtn.addEventListener('click', () => {
+            upvotes++;
+            upvoteCount.textContent = upvotes.toLocaleString();
+
+            if (upvotes > 100) {
+                upvoteCount.classList.add('absurd');
+            }
+
+            if (upvotes === 420) {
+                upvoteCount.textContent = "420 (nice)";
+            }
+            if (upvotes === 666) {
+                upvoteCount.textContent = "666 (uh oh)";
+            }
+            if (upvotes === 1337) {
+                upvoteCount.textContent = "1337 (elite)";
+            }
+        });
+
+        // Downvote does nothing meaningful
+        document.getElementById('downvote').addEventListener('click', () => {
+            alert("Invalid input. Life continues regardless of feedback.");
+        });
+
+        // Rating click reveals dev response
+        document.getElementById('rating').addEventListener('click', () => {
+            document.getElementById('dev-response').classList.add('visible');
+        });
+
+        // Show earlier patches
+        document.getElementById('show-patches').addEventListener('click', function() {
+            document.getElementById('early-patches').classList.add('visible');
+            this.style.display = 'none';
+        });
+
+        // Locked achievement clicking - frustrated responses
+        const lockedResponses = [
+            "Still locked. Have you tried... actually, never mind.",
+            "Progress unchanged. Executive dysfunction activated.",
+            "Achievement remains locked. Sleep schedule interference detected.",
+            "Error: Cannot force unlock. System requirements not met.",
+            "Nice try. The devs aren't that generous.",
+            "Locked. Consider the medication patch first.",
+            "Achievement locked. Energy levels insufficient."
+        ];
+        let responseIndex = 0;
+
+        document.querySelectorAll('[id^="locked-"]').forEach(achievement => {
+            achievement.style.cursor = 'pointer';
+            achievement.addEventListener('click', () => {
+                alert(lockedResponses[responseIndex % lockedResponses.length]);
+                responseIndex++;
+            });
+        });
+
+        // Review summary hover
+        document.getElementById('review-summary').addEventListener('mouseenter', function() {
+            this.title = 'One for each year';
+        });
+
+        // Hidden achievement - visible at 2-6am
+        const hour = new Date().getHours();
+        if (hour >= 2 && hour < 6) {
+            document.getElementById('hidden-achievement').style.display = 'flex';
+            document.getElementById('hint').textContent = "night owl detected";
+        }
+
+        // Konami code easter egg
+        const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    alert("DEVELOPER CONSOLE UNLOCKED\n\n> sleep_schedule.fix()\nError: Not implemented\n\n> energy.set(100)\nError: RNG override not permitted\n\n> apartment.clean()\nError: Executive dysfunction barrier active\n\n> life.debug()\nOutput: Working as intended. Probably.");
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        // Dog review vote
+        let dogVotes = 100;
+        document.getElementById('dog-review-votes').addEventListener('click', () => {
+            dogVotes += 10;
+            document.getElementById('dog-votes').textContent = dogVotes;
+            if (dogVotes > 150) {
+                document.getElementById('dog-votes').textContent = `${dogVotes} (good human!)`;
+            }
+        });
+
+        // Tag tooltips
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                alert(tag.getAttribute('title'));
+            });
+        });
+
+        // Screenshot carousel
+        const screenshots = [
+            { icon: '🖼️', text: 'Coming in a future update' },
+            { icon: '⏳', text: 'The devs are working on it' },
+            { icon: '🔧', text: 'In development since 1992' },
+            { icon: '💤', text: 'Will finish after fixing sleep schedule' },
+            { icon: '🦝', text: 'Check back later' }
+        ];
+        let currentScreenshot = 0;
+
+        function updateScreenshot(index) {
+            currentScreenshot = index;
+            document.getElementById('screenshot-icon').textContent = screenshots[index].icon;
+            document.getElementById('screenshot-text').textContent = screenshots[index].text;
+            document.querySelectorAll('.screenshot-thumb').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+        }
+
+        document.getElementById('screenshot-prev').addEventListener('click', () => {
+            updateScreenshot((currentScreenshot - 1 + screenshots.length) % screenshots.length);
+        });
+
+        document.getElementById('screenshot-next').addEventListener('click', () => {
+            updateScreenshot((currentScreenshot + 1) % screenshots.length);
+        });
+
+        document.querySelectorAll('.screenshot-thumb').forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                updateScreenshot(parseInt(thumb.dataset.index, 10));
+            });
+        });
+    </script>
+</body>
+</html>

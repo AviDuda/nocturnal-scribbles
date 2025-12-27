@@ -59,8 +59,8 @@ export async function copyStaticWithHashing(
 }
 
 /**
- * Copies files from public/ to dist root without modification.
- * Used for files like CNAME, robots.txt, favicon.ico, etc.
+ * Copies files and directories from public/ to dist root without modification.
+ * Used for files like CNAME, robots.txt, favicon.ico, and directories like games/.
  */
 export async function copyPublicFiles(
 	sourceDir: string,
@@ -74,6 +74,8 @@ export async function copyPublicFiles(
 
 		if (stat.isFile()) {
 			cpSync(sourcePath, join(destDir, entry));
+		} else if (stat.isDirectory()) {
+			cpSync(sourcePath, join(destDir, entry), { recursive: true });
 		}
 	}
 }
