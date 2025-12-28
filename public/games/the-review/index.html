@@ -23,6 +23,7 @@
         html.hd-mode select,
         html.hd-mode textarea,
         html.hd-mode * {
+            /* biome-ignore lint/complexity/noImportantStyles: needed to override all fonts for HD toggle */
             font-family: Tahoma, 'Segoe UI', system-ui, sans-serif !important;
             -webkit-font-smoothing: antialiased;
         }
@@ -1081,46 +1082,6 @@
                             </div>
                         </div>
 
-                        <!-- Recent News -->
-                        <div class="section-box">
-                            <div class="section-title">RECENT NEWS</div>
-                            <div class="news-item">
-                                <div class="news-date">June 2024</div>
-                                <div class="news-title">Players HATE This One Secret (Devs Hid It For Decades)</div>
-                                <div class="news-text">No one left to ask for answers. Community frustrated.</div>
-                            </div>
-                            <div class="news-item">
-                                <div class="news-date">April 2025</div>
-                                <div class="news-title">Patch v32.4: Confrontation System Finally Working</div>
-                                <div class="news-text">Player successfully removed hostile NPCs from venue. "I know what to do" moment confirmed.</div>
-                            </div>
-                            <div class="news-item">
-                                <div class="news-date">October 2022</div>
-                                <div class="news-title">Hotfix: Emergency Guild Change</div>
-                                <div class="news-text">Kicked from guild at 15:00. Met legendary NPC at 22:00. Same day.</div>
-                            </div>
-                            <div class="news-item">
-                                <div class="news-date">June 2015</div>
-                                <div class="news-title">One Email. 180,000 Viewers. Zero Recognition.</div>
-                                <div class="news-text">Lead developer still processing this ten years later.</div>
-                            </div>
-                            <div class="news-item">
-                                <div class="news-date">2014</div>
-                                <div class="news-title">[RESOLVED] Account Suspension Incident</div>
-                                <div class="news-text">Ban lifted after 24 hours. "Kid developer" label persists.</div>
-                            </div>
-                            <div class="news-item">
-                                <div class="news-date">November 2019</div>
-                                <div class="news-title">Patch Notes: Birthday Location Changed</div>
-                                <div class="news-text">For the first time, birthday event triggered outside home server. Three-week expedition concluded.</div>
-                            </div>
-                            <div class="news-item">
-                                <div class="news-date">April 2016</div>
-                                <div class="news-title">Solo Player Completes 4-Day Convention With No Party Members</div>
-                                <div class="news-text">Stamina depleted. Reputation gained. Sleep schedule destroyed.</div>
-                            </div>
-                        </div>
-
                         <!-- Similar Games -->
                         <div class="section-box">
                             <div class="section-title">MORE LIKE THIS</div>
@@ -1404,7 +1365,116 @@
                         </div>
                     </div>
 
-                    <input class="radiotab" name="tabs" tabindex="3" type="radio" id="tab-patches">
+                    <input class="radiotab" name="tabs" tabindex="3" type="radio" id="tab-news">
+                    <label class="label" for="tab-news">News</label>
+                    <div class="panel">
+                        <div class="section-box">
+                            <div class="section-title">ANNOUNCEMENTS</div>
+
+                            <div class="news-item">
+                                <div class="news-date">April 2025</div>
+                                <div class="news-title">Patch v32.4: Confrontation System Finally Working</div>
+                                <div class="news-text">
+                                    After years of the confrontation skill tree being locked behind anxiety debuffs, players report a breakthrough. Two hostile NPCs were successfully removed from a community venue after the player deployed the rarely-used "I know what to do" ability.
+                                    <br><br>
+                                    "The button was always there," explained community analysts. "It just took 32 versions to actually press it."
+                                    <br><br>
+                                    <em>Related: Players flagged for harassment removed from safe zone spawn tables</em>
+                                </div>
+                            </div>
+
+                            <div class="news-item">
+                                <div class="news-date">June 2024</div>
+                                <div class="news-title">Players HATE This One Secret (Devs Hid It For Decades)</div>
+                                <div class="news-text">
+                                    After 31 years of gameplay, a hidden lore discovery has left the community reeling. A party member who had access to classified information since v0.0 finally revealed that the family tree data structure has been corrupted from the start.
+                                    <br><br>
+                                    "I thought I knew the codebase," said the player in a statement. "Turns out the devs buried this deep. And now the only NPC who could explain it is permanently offline."
+                                    <br><br>
+                                    No patch is planned. Some bugs are features.
+                                </div>
+                            </div>
+
+                            <div class="news-item">
+                                <div class="news-date">October 2022</div>
+                                <div class="news-title">Hotfix: Emergency Guild Change (Same-Day Legendary Drop)</div>
+                                <div class="news-text">
+                                    In what developers are calling "the most efficient guild transition in game history," a player was kicked from their guild at 15:00 and encountered a legendary NPC by 22:00 the same day.
+                                    <br><br>
+                                    The new NPC now spawns approximately twice per week with a +100 routine anchoring buff. "Sometimes the RNG just works," noted the player.
+                                </div>
+                            </div>
+
+                            <div class="news-item">
+                                <div class="news-date">June 2018</div>
+                                <div class="news-title">CRITICAL: Core NPC Permanently Offline</div>
+                                <div class="news-text">
+                                    We regret to announce that a core NPC has been permanently removed from the game with no prior warning. No save point was available. No respawn is possible.
+                                    <br><br>
+                                    Grief processing module activated. Expected duration: indefinite.
+                                    <br><br>
+                                    The development team has no comment on why this NPC was removed before several critical dialogue options could be explored. Players report many questions will remain unanswered.
+                                    <br><br>
+                                    <em>[This was the worst patch]</em>
+                                </div>
+                            </div>
+
+                            <div class="news-item">
+                                <div class="news-date">November 2019</div>
+                                <div class="news-title">Patch Notes: Birthday Location Changed + Japan Expedition Complete</div>
+                                <div class="news-text">
+                                    For the first time in 27 versions, the birthday event triggered outside the home server. The player completed a three-week, six-city expedition across the Japan region before returning.
+                                    <br><br>
+                                    Additionally, a new companion (species: Dog) was acquired in April, providing significant routine anchoring bonuses and unconditional loyalty buffs.
+                                    <br><br>
+                                    <em>New home instance also unlocked this version. Current location: Prague server.</em>
+                                </div>
+                            </div>
+
+                            <div class="news-item">
+                                <div class="news-date">June 2015</div>
+                                <div class="news-title">One Email. 180,000 Viewers. Zero Recognition.</div>
+                                <div class="news-text">
+                                    In a stunning display of efficiency, a single email resulted in a game being featured on the industry's biggest stage with 180,000 concurrent viewers. The achievement went completely unrecognized by guild leadership.
+                                    <br><br>
+                                    "The guild leader didn't even watch," sources confirm. The recognition stat remains at 0 ten years later.
+                                    <br><br>
+                                    Analysts note this may be the origin point of ongoing "why even try" debuff stacks.
+                                </div>
+                            </div>
+
+                            <div class="news-item">
+                                <div class="news-date">April 2016</div>
+                                <div class="news-title">Solo Player Completes Convention With No Party Members</div>
+                                <div class="news-text">
+                                    A player successfully ran a convention booth for multiple days. Major industry event, thousands of attendees. Guild leader present but unhelpful. Publishing partners spawned but applied annoyance debuff.
+                                    <br><br>
+                                    <strong>Stats from the run:</strong><br>
+                                    • Stamina: Depleted<br>
+                                    • Reputation: +Gained<br>
+                                    • Sleep schedule: Destroyed<br>
+                                    • Party support: Technically present, effectively zero<br>
+                                    <br>
+                                    <em>Post-run analysis suggests the cohabitation experiment termination earlier that year may have contributed to solo playstyle adoption.</em>
+                                </div>
+                            </div>
+
+                            <div class="news-item">
+                                <div class="news-date">June 2014</div>
+                                <div class="news-title">[RESOLVED] Account Suspension Incident</div>
+                                <div class="news-text">
+                                    A temporary account suspension (duration: 24 hours) resulted in unexpected mass media coverage. The "kid developer" label was permanently applied to the player profile.
+                                    <br><br>
+                                    Official statement: "Worth it."
+                                    <br><br>
+                                    <em>This incident is believed to have contributed to the player's eventual career path in the games industry.</em>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <input class="radiotab" name="tabs" tabindex="4" type="radio" id="tab-patches">
                     <label class="label" for="tab-patches">Patches</label>
                     <div class="panel">
                         <div class="section-box">
@@ -1420,7 +1490,7 @@
                             <div class="patch">
                                 <div class="patch-version">BETA BRANCH</div>
                                 <div class="patch-list">
-                                    <div>Holiday event: Solo mode re-enabled (v32 fix reverted)</div>
+                                    <div>Holiday event: Solo mode re-enabled (v33 fix reverted)</div>
                                     <div>Tutorial zone revisited. Grief processing triggered.</div>
                                     <div>Audio system: Procedural music synthesizer integrated</div>
                                     <div>Memory archive expanded: 2012-present</div>
@@ -1512,7 +1582,7 @@
                                     <div class="patch-list">
                                         <div>Companion acquired: M████ (routine anchoring +100)</div>
                                         <div>New home instance unlocked (current)</div>
-                                        <div>Achievement unlocked: Japan expedition (3 weeks, 7 cities)</div>
+                                        <div>Achievement unlocked: Japan expedition (3 weeks, 6 cities)</div>
                                         <div>Character customization: Non-binary flag equipped</div>
                                         <div>Romance arc initiated (known bug: will cause issues)</div>
                                     </div>
@@ -1542,7 +1612,7 @@
                                     <div class="patch-version" title="November 2016">v24.0: Solo Run</div>
                                     <div class="patch-list">
                                         <div>Cohabitation experiment terminated</div>
-                                        <div>Solo raid completed: PAX East booth (4 days, 0 backup)</div>
+                                        <div>Solo raid completed: Convention booth (0 effective backup)</div>
                                         <div>Public speaking feat unlocked</div>
                                     </div>
                                 </div>
@@ -1603,7 +1673,7 @@
                         </div>
                     </div>
 
-                    <input class="radiotab" name="tabs" tabindex="4" type="radio" id="tab-achievements">
+                    <input class="radiotab" name="tabs" tabindex="5" type="radio" id="tab-achievements">
                     <label class="label" for="tab-achievements">Achievements</label>
                     <div class="panel">
                         <div class="section-box">
@@ -1901,7 +1971,7 @@
                                 <input type="checkbox" id="dlc-truth" disabled>
                                 <label class="cs-checkbox__label" for="dlc-truth">The Truth DLC - HIDDEN</label>
                             </div>
-                            <div class="dlc-desc">"Unlocks at v31. No preparation possible."</div>
+                            <div class="dlc-desc">"Unlocked during v31. No preparation possible."</div>
                         </div>
 
                         <div class="dlc-item">
@@ -1930,6 +2000,7 @@
 
     <script>
         // HD font toggle
+        // biome-ignore lint/correctness/noUnusedVariables: used in inline onclick handler
         function toggleHD(e) {
             e.preventDefault();
             document.documentElement.classList.toggle('hd-mode');
