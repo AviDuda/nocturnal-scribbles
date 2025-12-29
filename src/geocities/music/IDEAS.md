@@ -218,6 +218,32 @@ Genres that fit the 90s web aesthetic and are achievable with oscillator synthes
 - **Metric Modulation** - Tempo feels like it changes
 - **Rubato** - Expressive timing freedom
 
+### Pattern Differentiation Problem
+
+**Current issue:** All melody patterns use the same note selection logic, making them sound similar despite different structures.
+
+**What's the same across all patterns:**
+- Melodic intervals: `[-2, -1, -1, 0, 1, 1, 2]` stepwise motion everywhere
+- Rhythm values: `[0.5, 1, 1, 1.5]` - same three durations
+- Chord tones: `[0, 2, 4]` - same choices in every pattern
+
+**Fix: Give each pattern type distinct vocabulary:**
+
+| Pattern | Intervals | Rhythm | Contour |
+|---------|-----------|--------|---------|
+| Riff | Bigger leaps, exact repetition | Short, punchy, consistent | Angular |
+| Call/Response | Steps + leaps | Long → short, short → long | Question ends high, answer ends low |
+| Sequence | Strict transposition | Identical each repeat | Ascending or descending |
+| Ostinato | Very narrow (1-2 notes) | Mechanical, exact | Flat |
+| Pedal | Wide around drone | Flowing, rubato-like | Circular |
+| Trance | Rising 4ths/5ths | Dotted rhythms | Uplifting arc |
+| Lofi | Chromatic approaches | Swing, behind-beat | Lazy, meandering |
+| Chiptune | Octave jumps | Fast arpeggios | Bouncy |
+
+**Same issue exists in bass patterns** - all use similar root/fifth movement regardless of pattern type.
+
+**Priority:** High impact, relatively contained change - differentiate the interval/rhythm pools per pattern type.
+
 ### Drum Patterns (Future)
 
 - **Blast Beats** - Very fast alternating kick/snare (metal)
@@ -354,6 +380,42 @@ Some stations only broadcast at certain hours. Outside hours: static or "off air
 - **Oversampling** - Reduce aliasing on harsh waveforms
 - **Dynamic Range** - Limiter on master output
 - **Ducking Polish** - Smoother sidechain curves
+
+### Per-Instrument Effects Routing
+
+**Current problem:** All audio goes through one global reverb chain. Drums get reverbed even in genres where they should be dry (chiptune, techno).
+
+**Current signal flow:**
+```
+All synths → effectsGain → chorusReverbChain → output
+```
+
+**Better approach - separate buses:**
+```
+Drums → drumBus (dry or minimal reverb) → output
+Bass → bassBus (usually dry) → output
+Melody/Pad/Arp → melodicBus → chorusReverbChain → output
+```
+
+**Options:**
+1. **Full separation**: Three buses with independent effects chains
+2. **Drums-only fix**: Drums bypass reverb, everything else uses current chain
+3. **Per-genre drum reverb**: Add `drumReverbRange` to genre config, separate from melodic reverb
+
+**Priority:** High for chiptune/techno/midi where reverbed drums sound obviously wrong. Those genres want that dry, punchy, machine-precise drum sound.
+
+### Track Mute Delay Bug
+
+**Problem:** Toggling instruments off doesn't take effect immediately - takes up to 15 seconds.
+
+**Cause:** 15-second lookahead scheduling for background playback. Notes are pre-scheduled as Web Audio nodes. `setTrackMute()` only sets a flag checked when *new* notes are scheduled - already-scheduled nodes play regardless.
+
+**Fix options:**
+1. **Per-track gain nodes** - Route each track through its own GainNode, mute by setting gain to 0 (instant)
+2. **Track scheduled nodes per-track** - Store node references by track type, stop them on mute
+3. **Hybrid** - Use gain nodes for instant mute, but also stop scheduled nodes to free resources
+
+Option 1 is cleanest - adds drums/bass/melody/pad/arp/fx gain nodes, mute controls gain instead of skipping scheduling.
 
 ### Performance
 
