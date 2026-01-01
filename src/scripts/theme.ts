@@ -150,7 +150,11 @@ buttons.forEach((btn) => {
 		currentTheme = theme ?? DEFAULT_THEME;
 		localStorage.setItem("theme", theme);
 		// Geocities applies inline styles everywhere, reload to clean up
-		if (wasGeocities && theme !== "geocities") {
+		// Also reload if switching TO geocities while standalone music player is active
+		if (
+			(wasGeocities && theme !== "geocities") ||
+			(theme === "geocities" && musicPlayerActive)
+		) {
 			location.reload();
 			return;
 		}
