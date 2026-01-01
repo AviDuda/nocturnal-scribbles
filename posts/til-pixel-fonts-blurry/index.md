@@ -17,7 +17,7 @@ ArialPixel is designed on a 16×16 pixel grid (em=1024, 64-unit grid). It's outl
 
 When the font size doesn't match the design grid (multiples of 16px), the pixel grid doesn't align with display pixels. Modern browsers apply antialiasing to smooth the edges. Result: blur.
 
-I dug into the font with FontForge.[^fontforge] The GASP table had empty hinting flags - no gridfitting instructions telling renderers how to snap to pixels.
+I dug into the font with FontForge.[^fontforge] The GASP table had empty hinting flags - no gridfitting instructions telling renderers how to snap to pixels. (I did gasp when I saw it. Sorry.)
 
 Here's a sandbox comparing everything I tried:
 

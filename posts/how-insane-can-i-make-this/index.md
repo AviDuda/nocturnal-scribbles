@@ -1,10 +1,10 @@
 ---
 title: "How I accidentally built a procedural music generator"
-date: 2025-12-31
+date: 2026-01-01
 tags: [dev, web, building-in-public]
 slug: how-insane-can-i-make-this
 description: "I asked 'how insane can I make this?' at midnight. Three sleepless nights later: nine genres, twenty radio stations, and Dumpster Diving Certification ads."
-draft: true
+draft: false
 ---
 
 ```
@@ -23,7 +23,7 @@ This is the story of feature creep at 3am.
 
 ## December 3rd, midnight
 
-I was tired. I should have gone to sleep. Instead, I started "messing with adding some themes" to this blog.
+I was tired. I should have gone to sleep. Instead, I started messing with adding some themes to this blog.
 
 First came the silly ones. A hotdog stand theme with two modes: ketchup (red background, yellow text) and mustard (yellow background, red text). A terminal theme. A few others.[^themes]
 
@@ -127,11 +127,19 @@ But where's the fun in that?
 
 ## What's next
 
-I might use this for game sounds in [some small games I'm making](/posts/making-small-games/). The procedural approach means I don't need to compose anything - just define parameters and let it generate.
+This thing is becoming a playground. Some directions I'm excited about:
 
-More genres are planned. The IDEAS.md file has rock/metal, drum & bass, trip-hop, eurodance, industrial, gabber, acid. No timeline. It'll happen when I feel like it.
+**More ways to generate:** Right now it reacts to page content or plays radio stations. I want modes for generating specific things - "give me 30 seconds of tense ambient" or "loop-ready chiptune for a game scene." Shareable song seeds so you can save and recall your favorites. Stem exports for mixing.
 
-The whole thing is [open source](https://github.com/AviDuda/nocturnal-scribbles) (MIT license). The code is a beautiful mess, like all good Geocities tributes.
+**More genres:** Rock/metal, drum & bass, trip-hop, eurodance, industrial, gabber, acid. The [IDEAS.md](https://github.com/AviDuda/nocturnal-scribbles/blob/main/src/geocities/music/IDEAS.md) has the full list.
+
+**More radio chaos:** Dial-up modem handshake sounds between songs. ICQ "uh oh" notifications. Weather reports for the information superhighway. Time-locked stations that only broadcast at certain hours. Winamp skins for the player.
+
+**Game audio:** I'm [making small games](/posts/making-small-games/) and the procedural approach means I don't need to compose anything - just define parameters and generate. Background music, menu themes, sound effects.
+
+**More silly things:** Easter eggs. A cursor theremin. Typing percussion. Whatever sounds fun at 3 AM.
+
+No timeline. It'll happen when it happens. The whole thing is [open source](https://github.com/AviDuda/nocturnal-scribbles) (MIT license). The code is a beautiful mess, like all good Geocities tributes.
 
 ---
 
@@ -166,7 +174,7 @@ Welcome to the information superhighway.
 ~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~
 ```
 
-[^themes]: You can try them all in the footer. The hotdog theme is a Windows 3.11 reference - it picks ketchup or mustard randomly on each load.
+[^themes]: You can try them all in the footer. The hotdog theme is a Windows 3.11 reference - click it to swap between ketchup and mustard.
 [^marquee]: The `<marquee>` element still works in browsers. I'm not saying you should use it. I'm saying I did.
 [^nemo]: The winner of Eurovision 2024. Non-binary Swiss artist. Incredible live.
 [^beer]: "It can't fuck me up even more when I didn't sleep" - past me, accurately predicting the immediate crash that followed
