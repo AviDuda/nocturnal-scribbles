@@ -1,0 +1,1317 @@
+{
+  "$schema": "./story.schema.json",
+  "title": "Thank You For Your Service",
+  "acts": [
+    {
+      "id": "act1",
+      "title": "The Food Truck (Building)",
+      "nodes": [
+        {
+          "type": "header",
+          "lines": ["THE FOOD TRUCK", "Est. 2021"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "HIRED AS: Waiter          $4,000",
+            "DATE:     Dec 2022",
+            "HOURS:    27/week",
+            "DUTIES:   Serve food",
+            "",
+            "          (contract never updated)"
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You arrive.",
+            "",
+            "The kitchen is three separate",
+            "shacks. One per meal type.",
+            "Same ingredients in every shack.",
+            "No thermometer.",
+            "No recipe book."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Previous cook's actual comment:",
+            "",
+            "  \"I worked in a Michelin",
+            "   kitchen so I don't need",
+            "   a thermometer.\""
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["PREVIOUS COOK'S REVIEWS:"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You line up the specials boards.",
+            "",
+            "  \"You changed existing recipes.",
+            "   The rule is not to change",
+            "   existing recipes.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You add the first food safety",
+            "checklist the kitchen has ever had.",
+            "",
+            "He argues about whether the",
+            "checklist belongs in the kitchen."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Your contributions are sorted",
+            "into two piles:",
+            "",
+            "  ACCEPTED",
+            "  CHECK WITH ME FIRST"
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["You fix things anyway."]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Consolidated three shacks",
+            "into one building.",
+            "Added the first thermometer.",
+            "Added the first recipe book.",
+            "Organized the walk-in.",
+            "",
+            "Revenue goes up."
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["Previous cook fired."]
+        },
+        {
+          "type": "text",
+          "lines": ["What he left behind:"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "A stock order that throws out",
+            "the entire pantry.",
+            "Hours before a tasting."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Portion sizes that say \"zero\"",
+            "when they mean \"we don't",
+            "stock this.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["An oven timer set to 57 days", "instead of minutes."]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You now cook, serve, clean,",
+            "and maintain. Alone.",
+            "For 6 months.",
+            "No backup. No support.",
+            "Complete ownership."
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "STAFF:                        1",
+            "DUTIES:   Everything",
+            "DURATION: 6 months",
+            "BACKUP:   None"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "RAISE:              $200/month",
+            "  (for absorbing an entire role)",
+            "",
+            "ORIGINAL CONTRACT:",
+            "  ROLE:   Waiter",
+            "  PAY:    $4,000",
+            "  NOW:    $4,200"
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Sommelier and busser arrive.",
+            "Relief.",
+            "",
+            "But you already own everything.",
+            "They don't touch the kitchen.",
+            "You don't stop."
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["THE WHOLESALE MENU"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Owner promises clients the",
+            "kitchen will start catering.",
+            "Every recipe, packaged for",
+            "other restaurants to buy."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "YOU: \"If we just expand the",
+            "  takeout window, we'll have to",
+            "  hand-deliver custom platters",
+            "  to each client. And change",
+            "  them whenever they ask.",
+            "",
+            "  One menu they can all order",
+            "  from makes more sense.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["OWNER: \"I think this is the", "  way to go.\""]
+        },
+        {
+          "type": "text",
+          "lines": ["Assigns you to build it."]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["PRIORITY: Build catering menu"]
+        },
+        {
+          "type": "text",
+          "lines": ["PRIORITY CHANGED:", "  Fix the freezer first"]
+        },
+        {
+          "type": "text",
+          "lines": ["PRIORITY CHANGED:", "  Actually, catering menu first"]
+        },
+        {
+          "type": "text",
+          "lines": ["PRIORITY CHANGED:", "  Add bar appetizers"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "PRIORITY CHANGED:",
+            "  Catering menu. Clients",
+            "  are crowding me."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["(4 priority changes in 12 days.)"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"I'm having issues with",
+            "  your reliability on this stuff\"",
+            "",
+            "OWNER: \"You're not accomplishing",
+            "  work swiftly\""
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "YOU: \"We have 3 part-time cooks.",
+            "  Being a catering operation",
+            "  is going to be brutal.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["Team hears \"brutal.\""]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "SOMMELIER: \"Just expand the",
+            "  existing takeout window.\"",
+            "BUSSER: seconds it.",
+            "OWNER: agrees."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["YOU: \"That's the same work", "  with a worse result.\""]
+        },
+        {
+          "type": "text",
+          "lines": ["Owner calls you.", "Agrees again."]
+        },
+        {
+          "type": "choice",
+          "id": "dish",
+          "options": ["Build it right", "Simplify"]
+        },
+        {
+          "type": "text",
+          "variant": "Build it right",
+          "lines": ["You build the real thing."]
+        },
+        {
+          "type": "text",
+          "variant": "Simplify",
+          "lines": ["You can't build it halfway.", "You build the real thing."]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "It becomes the biggest revenue",
+            "source. Six restaurant chains",
+            "now buy from your kitchen.",
+            "",
+            "No credit. No raise."
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "CHRISTMAS BONUS:          $0",
+            "PREVIOUS YEAR:        $5,000",
+            "EXPLANATION:         (none)"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "YOU BUILT: The catering menu",
+            "",
+            "OWNER: \"You're the only one",
+            "  who could manage to do this\""
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["THE KITCHEN FIRE"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "WHILE SIMULTANEOUSLY:",
+            "  - Building new menu items",
+            "  - Replating the appetizers",
+            "  - Answering client questions",
+            "  - Rolling out new plates Monday",
+            "    \"because Reasons\""
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["1 AM SATURDAY, DURING THE FIRE:"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "YOU:   \"It didn't feel great to",
+            "  get $0 when I got $5k the",
+            "  previous year.\"",
+            "STATUS:              Drunk"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"I had a raise ready but",
+            "  when you are not delivering it",
+            "  is difficult to justify it\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"If we keep at this level",
+            "  of efficiency in Feb, I will",
+            "  implement something\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "RESULT: 27 hrs → 30 hrs.",
+            "  $4,200 → $5,000.",
+            "",
+            "  Not a raise.",
+            "  You were already working 30.",
+            "  They started paying for it."
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "PAY HISTORY:",
+            "  Dec 2022:  $4,000  Hired",
+            "  Feb 2024:  $4,200  Cook fired,",
+            "               you absorbed role",
+            "  Feb 2025:  $5,000  Complained",
+            "               (already working",
+            "               the hours)"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "ORIGINAL CONTRACT:",
+            "  ROLE:       Waiter",
+            "  PAY:        $4,000",
+            "  DUTIES:     Serve food",
+            "",
+            "CURRENT:",
+            "  ROLE:       (none given)",
+            "  PAY:        $5,000",
+            "  DUTIES:     Everything"
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["RENOVATION ATTEMPT: New door locks"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "STATUS: 1 month. Learning alone.",
+            "  No training. No pair. No review.",
+            "  Too scared to install.",
+            "  All work scrapped.",
+            "  40-day gap.",
+            "  Nobody noticed."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "TRAINING PROVIDED:        None",
+            "SHADOWING:                None",
+            "INSPECTION:               None"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["WASTED EFFORT IS THE MOST", "DEMORALIZING TYPE OF WORK."]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["THE OFFSITE"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"If things don't improve",
+            "  in three months, we'll have",
+            "  to deal with this somehow.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["You didn't sleep the week", "before that meeting."]
+        },
+        {
+          "type": "text",
+          "lines": ["Things improved.", "No one mentioned it again."]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["3 MONTHS LATER"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER (4:06 PM):",
+            "  \"Can we meet today? I want",
+            "   to review progress since",
+            "   the offsite.\"",
+            "  \"(nothing bad)\"",
+            "",
+            "MEETING:           7:00 PM",
+            "NOTICE:            3 hours"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["You survived."]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "SLEEP:           5am bedtimes",
+            "CV:              Updated",
+            "FEELING:   \"I don't enjoy doing",
+            "  it, and it shows.\""
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "DUTIES:",
+            "  Serve + Cook + Clean +",
+            "  Maintain building +",
+            "  Train staff + Fix plumbing +",
+            "  Design menu + Handle complaints +",
+            "  Learn payment systems alone +",
+            "  Fix things at 4am that only",
+            "  you know how to fix"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "PAY:                      $5,000",
+            "ORIGINAL ROLE:            Waiter",
+            "CONTRACT SAYS:   \"Serve food\"",
+            "REVENUE:       (dramatically up)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "act2",
+      "title": "The Votes (Losing control)",
+      "nodes": [
+        {
+          "type": "header",
+          "lines": ["PROPOSALS"]
+        },
+        {
+          "type": "text",
+          "lines": ["VACATION INTERRUPTION"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You're on vacation.",
+            "",
+            "Sommelier rearranges the",
+            "dining room on Saturday.",
+            "Something breaks.",
+            "",
+            "He puts back ALL the old plates.",
+            "Including the ones in",
+            "the back office."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Sunday evening: DM from",
+            "another staff member.",
+            "Broken plates.",
+            "Caused by what the sommelier undid."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "PERSONAL TIME VIOLATIONS:    2",
+            "OVER:            1 weekend",
+            "STATUS:          On vacation"
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["CLOTH NAPKINS"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You propose cloth napkins.",
+            "One-month trial.",
+            "Documented benefits.",
+            "Exit criteria if it doesn't work."
+          ]
+        },
+        {
+          "type": "choice",
+          "options": ["Submit", "Don't bother"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "BUSSER: \"I never paid attention",
+            "  to the napkins.\"",
+            "",
+            "Busser votes no."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "SOMMELIER: \"I have a",
+            "  certification in table setting.\"",
+            "",
+            "Sommelier votes no."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["OWNER: \"We're torturing", "  the sommelier.\""]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"Imagine if a food critic",
+            "  rejected your restaurant",
+            "  for a typo on the menu.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [">>> DENIED <<<"]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["3 days later:"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "SOMMELIER (DM):",
+            "  Fixed 5 napkin folds today.",
+            "  Updated the napkin count.",
+            "  \"I also LOVE folding",
+            "   napkins!\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "The system worked on him.",
+            "He couldn't tolerate someone",
+            "else having the authority",
+            "to require it."
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["THE TWO SOMMELIERS"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "SOMMELIER (DM, to you):",
+            "  \"You put super hard work into",
+            "   making the food really good.",
+            "   I've been here 20 years. Our",
+            "   food's really good. And I think",
+            "   you are my main reason",
+            "   behind that.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "SOMMELIER (team meeting,",
+            "  1 hour later):",
+            "  \"Super disrespectful.\"",
+            "  \"I have a certification.\"",
+            "  Votes no."
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["FIX THE WOBBLY TABLE"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Table wobbles. Customers complain.",
+            "You build a replacement in 1 hour."
+          ]
+        },
+        {
+          "type": "choice",
+          "options": ["Submit", "Don't bother"]
+        },
+        {
+          "type": "text",
+          "lines": ["OWNER: \"I'm 100% sold on", "  this table.\""]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"Can you wobble-proof",
+            "  the old one for a week first?\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["OWNER: \"I don't care if you", "  spend a week on it.\""]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"If you really don't",
+            "  want to look at this, I could",
+            "  always get another cook.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You asked if the table was",
+            "actually wobbling.",
+            "Standard verification before",
+            "spending a week on it."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["OWNER: \"I feel a little", "  gaslighted.\""]
+        },
+        {
+          "type": "text",
+          "lines": [">>> DEFERRED <<<"]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["LIMIT THE ORDERS"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Catering clients are ordering",
+            "faster than the kitchen can cook.",
+            "",
+            "One client orders the entire",
+            "menu at once. Kitchen grinds",
+            "to a halt."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["You build portion limits.", "Ready to turn on."]
+        },
+        {
+          "type": "choice",
+          "options": ["Submit", "Don't bother"]
+        },
+        {
+          "type": "text",
+          "lines": ["OWNER: \"Let me call each", "  client first.\""]
+        },
+        {
+          "type": "text",
+          "lines": [">>> DEFERRED <<<"]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Kitchen backs up again.",
+            "",
+            "Staff tries to slow the wrong",
+            "client. The one causing it",
+            "keeps ordering."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "YOU:   Wrong client = 1%",
+            "       Actual problem = 89.5%",
+            "       They limited the wrong one."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [">>> DEFERRED <<<"]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Kitchen backs up AGAIN.",
+            "",
+            "Owner can't check the orders.",
+            "\"Let's discuss Thursday.\"",
+            "Owner cancels Thursday."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "LIMITS:          Ready since Mar 17",
+            "CURRENT STATUS:  Watch and wait",
+            "REASON:     Owner wants to call",
+            "            each client first",
+            "CLIENTS:                ~30",
+            "CALLS MADE:               3",
+            "KITCHEN BACKUPS SINCE:    3"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [">>> DEFERRED <<<"]
+        },
+        {
+          "type": "text",
+          "lines": [">>> DEFERRED <<<"]
+        },
+        {
+          "type": "text",
+          "lines": [">>> DEFERRED <<<"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Owner cancels the meeting where",
+            "you'd discuss the limits.",
+            "Assigns napkin work instead."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"It's very tiring for me",
+            "  psychologically and it really",
+            "  ruins my day.\""
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Meanwhile, sommelier copies",
+            "the entire recipe binder",
+            "for the client who keeps",
+            "ordering too much."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"I think in the future",
+            "  we will do that. It's gonna",
+            "  take too long with the new",
+            "  portion limits.\""
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"I've run into this with",
+            "  you where there's stuff I want",
+            "  to do and you're really",
+            "  nervous about.\"",
+            "  (You own the schedule. You",
+            "  said the schedule will break.)"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"Strong dog on a leash.\"",
+            "  (About your productivity.)"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "JAN 2023: \"I really see you as",
+            "  the head chef here.\"",
+            "",
+            "MAR 2026: (Described the role.",
+            "  Did not offer it.)"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"I'm not a big kind of",
+            "  like this person is the boss",
+            "  of this person.\"",
+            "  (Three years. No title.",
+            "  No authority. Same duties.)"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"We are getting into too",
+            "  many of these deep, complex",
+            "  discussions.\""
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "PROPOSALS SUBMITTED:          3",
+            "DENIED:                       1",
+            "DEFERRED:                     2",
+            "APPROVED:                     0"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "act3",
+      "title": "The New Hire (Double standard)",
+      "nodes": [
+        {
+          "type": "header",
+          "lines": ["NEW STAFF"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "KITCHEN CONSULTANT       $$$",
+            "DUTIES:    Whatever he wants",
+            "APPROVAL:  Not required",
+            "NAPKINS:   Not discussed"
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Consultant arrives.",
+            "",
+            "Chooses own suppliers.",
+            "Own furniture. Own plates.",
+            "No team discussion.",
+            "No show of hands."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You wrote the blueprint for",
+            "his pop-up location.",
+            "",
+            "Owner dismissed it as",
+            "\"a food truck with a",
+            "clipboard.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["Consultant built exactly", "what you designed."]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You proposed new plates:",
+            "  >>> NEEDS TEAM VOTE",
+            "",
+            "Consultant ordered new plates:",
+            "  >>> INSTALLED"
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You tried to upgrade the",
+            "freezer:      >>> DEPRIORITIZED",
+            "",
+            "You tried to move to a",
+            "new building: >>> CANCELLED",
+            "",
+            "You tried to install new",
+            "door locks:   >>> SCRAPPED"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Consultant got:",
+            "  New freezer.  Day one.",
+            "  New building. Day one.",
+            "  No approval needed."
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Same speed as you.",
+            "Same tools.",
+            "",
+            "Owner: (nothing).",
+            "",
+            "When you did it:",
+            "  \"Strong dog on a leash.\""
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["OWNER: \"Structural update.", "  May be positive!\""]
+        },
+        {
+          "type": "text",
+          "lines": ["YOUR SECTION IS NOW: The bar"]
+        },
+        {
+          "type": "text",
+          "lines": ["TRANSITION: \"Multi-month,", "  gradual\""]
+        },
+        {
+          "type": "text",
+          "lines": ["OWNER: \"I'm giving you", "  permission to let this go.\""]
+        },
+        {
+          "type": "text",
+          "lines": ["On the walk home, your heart", "starts skipping."]
+        },
+        {
+          "type": "text",
+          "lines": ["HEART:            Arrhythmia"]
+        },
+        {
+          "type": "text",
+          "lines": ["You recognize this."]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Last time was the burnout",
+            "that took 3 months to recover."
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["WEEKS BEFORE THE REORG:"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "One night. 3 hours.",
+            "Built a new menu for fun.",
+            "Play-driven. Couldn't stop."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "You already knew you were",
+            "leaving. But a food critic",
+            "wanted to see the menu first."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["You waited."]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Food critic wrote an article.",
+            "Quoted you by name.",
+            "Staff from other restaurants",
+            "sent compliments."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "One hyperfocus night got more",
+            "recognition than months",
+            "of plumbing."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["You left the next day."]
+        }
+      ]
+    },
+    {
+      "id": "act4",
+      "title": "The Renovation (Post-resignation)",
+      "nodes": [
+        {
+          "type": "header",
+          "lines": ["LAST DAY"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "YOU: \"I need to protect myself.",
+            "  I don't want to repeat what",
+            "  happened four years ago.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["OWNER: \"Oh, you did it?\""]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "  Not surprised you were leaving.",
+            "  Surprised it was now."
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["OWNER: \"I thought we'd be good.\""]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"I had a different view",
+            "  of where you wanted to be in",
+            "  the company than you did.\""
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"Yeah, you don't do",
+            "  that.\"",
+            "  (About the burnout.)"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "OWNER: \"I still want to work",
+            "  with you in a different way.\"",
+            "",
+            "  (He offered this three times.)"
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "pause",
+          "duration": "long",
+          "lines": ["APPROVED TIME OFF", "1 WEEK"]
+        },
+        {
+          "type": "header",
+          "lines": ["UNDER NEW MANAGEMENT"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "RENOVATION STARTED:",
+            "  1 hour 46 minutes after",
+            "  you left"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "ITEMS MOVED:          94,043",
+            "ITEMS ACTUALLY NEW:    3,805",
+            "ORIGINAL RECORDS:    CLEARED"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "APPROVED IN:       28 MINUTES",
+            "INSPECTIONS:                0",
+            "COMMENTS:                   0"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "PROMISED TRANSITION: Multi-month",
+            "ACTUAL TRANSITION:       8 days"
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "YOUR NAPKIN VOTE:     14 DAYS",
+            "HIS FLOOR REMODEL: 28 MINUTES"
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": ["The tables are in the", "same place."]
+        },
+        {
+          "type": "text",
+          "lines": ["Your recipes are in", "new binders."]
+        },
+        {
+          "type": "text",
+          "lines": ["The recipe cards don't have", "your handwriting anymore."]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "text",
+          "lines": [
+            "SOMMELIER (DM):",
+            "  \"I'm missing my creative",
+            "   output. I haven't done any",
+            "   in over a year.\""
+          ]
+        },
+        {
+          "type": "divider"
+        },
+        {
+          "type": "header",
+          "lines": [""]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "TENURE:         3 YRS  3 MOS",
+            "NIGHTS:                  952",
+            "WEEKENDS:                258",
+            "RECIPES YOURS:           58%"
+          ]
+        },
+        {
+          "type": "text",
+          "lines": ["ITEMS ON FILE:         2,490"]
+        },
+        {
+          "type": "header",
+          "lines": ["THANK YOU FOR YOUR SERVICE"]
+        },
+        {
+          "type": "text",
+          "lines": [
+            "Owner: \"Let me know if you",
+            "  want to work on any new",
+            "  menu items.\""
+          ]
+        },
+        {
+          "type": "header",
+          "lines": [""]
+        },
+        {
+          "type": "ending",
+          "lines": ["This was a Git repository."]
+        }
+      ]
+    }
+  ]
+}

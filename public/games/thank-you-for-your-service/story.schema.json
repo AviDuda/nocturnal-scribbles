@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Thank You For Your Service - Story Data",
+  "description": "Receipt-format story told as a sequence of nodes, each revealed on tap/click.",
+  "type": "object",
+  "required": ["title", "acts"],
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "acts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/act" }
+    }
+  },
+  "$defs": {
+    "act": {
+      "type": "object",
+      "required": ["id", "title", "nodes"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Act identifier (e.g. 'act1', 'act2')"
+        },
+        "title": {
+          "type": "string",
+          "description": "Act title for internal reference, not necessarily displayed"
+        },
+        "nodes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/node" }
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": ["header", "text", "divider", "choice", "pause", "ending"]
+        },
+        "lines": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Lines of text. For header: centered with ═══ borders. For text: printed as receipt lines. Whitespace is significant (monospace alignment)."
+        },
+        "options": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Choice labels. Both resolve to the same next node (choices are fake)."
+        },
+        "duration": {
+          "type": "string",
+          "enum": ["short", "long"],
+          "description": "For pause nodes. short = brief dim, long = extended dim (e.g. vacation)."
+        },
+        "id": {
+          "type": "string",
+          "description": "Optional identifier for a node, used for the one real choice (the dish)."
+        },
+        "variant": {
+          "type": "string",
+          "description": "If set, this node only shows for one branch of a choice (value matches the chosen option text)."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "header" } } },
+          "then": { "required": ["lines"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "text" } } },
+          "then": { "required": ["lines"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "choice" } } },
+          "then": { "required": ["options"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "pause" } } },
+          "then": { "required": ["duration"] }
+        }
+      ]
+    }
+  }
+}

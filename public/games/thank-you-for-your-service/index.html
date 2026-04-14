@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Thank You For Your Service</title>
+        <meta
+            name="description"
+            content="A scrolling receipt that tells the story of three years at a restaurant you built from nothing."
+        />
+        <meta property="og:title" content="Thank You For Your Service" />
+        <meta
+            property="og:description"
+            content="A scrolling receipt that tells the story of three years at a restaurant you built from nothing."
+        />
+        <meta property="og:type" content="website" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            *,
+            *::before,
+            *::after {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            html,
+            body {
+                height: 100%;
+                overflow: hidden;
+            }
+
+            body {
+                background: #0a0a0a;
+                font-family: "Space Mono", monospace;
+                font-size: 14px;
+                line-height: 1.4;
+                color: #1a1a1a;
+                display: flex;
+                justify-content: center;
+            }
+
+            /* -- Game layout (single flex column) -- */
+            .game {
+                width: 384px;
+                max-width: calc(100vw - 32px);
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Dark void above paper -- shrinks as paper grows, min 5vh */
+            .void {
+                flex: 1 0 5vh;
+            }
+
+            /* -- Printer box -- */
+            .printer-slot {
+                flex: 0 0 8px;
+                background: #050505;
+                box-shadow:
+                    inset 0 -2px 6px rgba(0, 0, 0, 0.8),
+                    0 -1px 0 #333;
+            }
+
+            .printer-body {
+                flex: 0 0 48px;
+                position: relative;
+                background: linear-gradient(
+                    0deg,
+                    #2a2a2a 0%,
+                    #1a1a1a 60%,
+                    #111 100%
+                );
+                border-radius: 0 0 6px 6px;
+                border: 1px solid #333;
+                border-top: none;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 16px;
+            }
+
+            .printer-label {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 9px;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                color: #555;
+                user-select: none;
+            }
+
+            .printer-light {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: #333;
+                transition: background 0.3s;
+            }
+
+            .printer-light.on {
+                background: #4a2;
+                box-shadow: 0 0 4px #4a2;
+            }
+
+            .sound-toggle {
+                background: none;
+                border: 1px solid #444;
+                border-radius: 3px;
+                color: #666;
+                font-family: inherit;
+                font-size: 14px;
+                padding: 4px 8px;
+                cursor: pointer;
+                line-height: 1;
+                transition:
+                    color 0.2s,
+                    border-color 0.2s;
+            }
+
+            .sound-toggle:hover {
+                color: #999;
+                border-color: #666;
+            }
+
+            .sound-toggle.active {
+                color: #4a2;
+                border-color: #4a2;
+            }
+
+            /* Torn zigzag edge -- hidden until first print */
+            .torn-edge {
+                flex: 0 0 0;
+                overflow: hidden;
+                background:
+                    linear-gradient(315deg, #f5f0e8 50%, transparent 50%) 0 0 /
+                        12px 12px repeat-x,
+                    linear-gradient(45deg, #f5f0e8 50%, transparent 50%) 0 0 /
+                        12px 12px repeat-x;
+            }
+
+            /* -- Paper (grows with content, scrolls when full) -- */
+            .paper {
+                flex: 0 1 auto;
+                min-height: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+                scrollbar-width: none;
+                padding: 0 20px;
+                /* Faint horizontal rules */
+                background-image: repeating-linear-gradient(
+                    180deg,
+                    transparent,
+                    transparent calc(1.4em - 1px),
+                    rgba(0, 0, 0, 0.03) calc(1.4em - 1px),
+                    rgba(0, 0, 0, 0.03) 1.4em
+                );
+                background-color: #f5f0e8;
+                background-attachment: local;
+            }
+
+            .paper::-webkit-scrollbar {
+                display: none;
+            }
+
+            /* -- Node styles -- */
+            .node {
+                margin-bottom: 0.4em;
+                white-space: pre;
+                overflow-wrap: normal;
+                word-break: keep-all;
+            }
+
+            .node-header {
+                text-align: center;
+                font-weight: 700;
+                padding: 0.6em 0;
+            }
+
+            .node-header::before,
+            .node-header::after {
+                content: "================================";
+                display: block;
+                text-align: center;
+            }
+
+            .node-header.empty-header::before,
+            .node-header.empty-header::after {
+                content: "================================";
+            }
+
+            .node-divider {
+                text-align: center;
+                padding: 0.4em 0;
+                color: #999;
+            }
+
+            .node-divider::before {
+                content: "\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500\2500";
+            }
+
+            .node-text .line {
+                display: block;
+                min-height: 1.4em;
+                opacity: 0;
+            }
+
+            .node-text .line.printed {
+                animation: feed-in 0.15s steps(3) both;
+            }
+
+            .node-denied,
+            .node-deferred {
+                font-weight: 700;
+            }
+
+            /* -- Choices -- */
+            .node-choice {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px 0;
+                white-space: normal;
+            }
+
+            .choice-btn {
+                font-family: "Space Mono", monospace;
+                font-size: 14px;
+                background: #f5f0e8;
+                color: #1a1a1a;
+                border: 1px solid #1a1a1a;
+                padding: 8px 16px;
+                cursor: pointer;
+                text-align: left;
+                transition:
+                    background 0.15s,
+                    color 0.15s;
+            }
+
+            .choice-btn:hover,
+            .choice-btn:focus-visible {
+                background: #1a1a1a;
+                color: #f5f0e8;
+            }
+
+            .choice-btn:focus-visible {
+                outline: 2px solid #1a1a1a;
+                outline-offset: 2px;
+            }
+
+            .choice-btn.chosen {
+                background: #1a1a1a;
+                color: #f5f0e8;
+                cursor: default;
+            }
+
+            .choice-btn.not-chosen {
+                opacity: 0.3;
+                cursor: default;
+                pointer-events: none;
+            }
+
+            /* -- Dim overlay for pauses -- */
+            .dim-overlay {
+                position: fixed;
+                inset: 0;
+                background: #0a0a0a;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.8s ease;
+                z-index: 5;
+            }
+
+            .dim-overlay.active {
+                opacity: 0.85;
+                pointer-events: auto;
+            }
+
+            .dim-text {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: #f5f0e8;
+                font-family: "Space Mono", monospace;
+                font-size: 24px;
+                text-align: center;
+                white-space: pre;
+                z-index: 6;
+                opacity: 0;
+                transition: opacity 1.2s ease;
+            }
+
+            .dim-text.visible {
+                opacity: 1;
+            }
+
+            /* -- Paper feed animation -- */
+            .node-enter {
+                animation: feed-in 0.15s steps(3) both;
+            }
+
+            @keyframes feed-in {
+                from {
+                    opacity: 0;
+                    transform: translateY(4px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* -- Tap prompt -- */
+            .tap-prompt {
+                position: fixed;
+                bottom: 72px;
+                left: 50%;
+                transform: translateX(-50%);
+                color: #444;
+                font-family: "Space Mono", monospace;
+                font-size: 11px;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                opacity: 0;
+                transition: opacity 0.6s;
+                pointer-events: none;
+                z-index: 6;
+            }
+
+            .tap-prompt.visible {
+                opacity: 1;
+            }
+
+            .tap-prompt.hidden {
+                opacity: 0;
+            }
+
+            /* -- Game ended: paper torn off, printer error -- */
+            .paper-torn-bottom {
+                width: 100%;
+                height: 12px;
+                flex-shrink: 0;
+                background:
+                    linear-gradient(225deg, #f5f0e8 50%, transparent 50%) 0
+                        100% / 12px 12px repeat-x,
+                    linear-gradient(135deg, #f5f0e8 50%, transparent 50%) 0
+                        100% / 12px 12px repeat-x;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .paper-torn-bottom.visible {
+                opacity: 1;
+            }
+
+            /* Paper group wraps torn-edge + paper + torn-bottom so they scroll as one */
+            .paper-group {
+                display: contents;
+            }
+
+            .paper-group.scroll-away .torn-edge,
+            .paper-group.scroll-away .paper,
+            .paper-group.scroll-away .paper-torn-bottom {
+                transition:
+                    transform 4s ease-in,
+                    opacity 3.5s ease-in;
+                transform: translateY(-150vh);
+                opacity: 0;
+            }
+
+            .ending-text {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: #f5f0e8;
+                font-family: "Space Mono", monospace;
+                font-size: 14px;
+                text-align: center;
+                white-space: pre;
+                z-index: 6;
+                opacity: 0;
+                transition: opacity 2s ease;
+            }
+
+            .ending-text.visible {
+                opacity: 1;
+            }
+
+            .printer-light.error {
+                background: #a22;
+                box-shadow: 0 0 4px #a22;
+                animation: blink-red 1.5s ease infinite;
+            }
+
+            @keyframes blink-red {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.3;
+                }
+            }
+
+            /* -- Reduced motion -- */
+            @media (prefers-reduced-motion: reduce) {
+                .node-enter {
+                    animation: none;
+                }
+
+                .dim-overlay {
+                    transition: none;
+                }
+
+                .tap-prompt {
+                    transition: none;
+                }
+            }
+
+            /* -- Screen reader only -- */
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <a href="#paper" class="sr-only">Skip to receipt</a>
+
+        <div class="game">
+            <div class="void"></div>
+            <div class="paper-group" id="paper-group">
+                <div class="torn-edge"></div>
+                <main
+                    class="paper"
+                    id="paper"
+                    role="log"
+                    aria-live="polite"
+                    aria-label="Receipt"
+                ></main>
+                <div class="paper-torn-bottom" id="paper-torn-bottom"></div>
+            </div>
+            <div class="printer-slot"></div>
+            <div class="printer-body">
+                <span class="printer-light" id="printer-light"></span>
+                <span class="printer-label">SVC-2490</span>
+                <button
+                    type="button"
+                    class="sound-toggle"
+                    id="sound-toggle"
+                    aria-label="Toggle printer sound"
+                    title="Toggle sound"
+                >
+                    &#9834;
+                </button>
+            </div>
+        </div>
+
+        <div class="dim-overlay" id="dim-overlay"></div>
+        <div class="dim-text" id="dim-text"></div>
+        <div class="ending-text" id="ending-text"></div>
+
+        <div class="tap-prompt" id="tap-prompt">tap to continue</div>
+
+        <script>
+            // -- State --
+            let nodes = [];
+            let currentIndex = 0;
+            let paused = false;
+            let waitingForChoice = false;
+            let soundEnabled = true;
+            let audioCtx = null;
+            let lastChoice = null;
+            let hasStarted = false;
+            let idleTimer = null;
+            let printing = false;
+            let printTimers = [];
+
+            const paper = document.getElementById("paper");
+            const dimOverlay = document.getElementById("dim-overlay");
+            const dimText = document.getElementById("dim-text");
+            const tapPrompt = document.getElementById("tap-prompt");
+            const printerLight = document.getElementById("printer-light");
+            const soundToggle = document.getElementById("sound-toggle");
+
+            // -- Audio --
+            function getAudioCtx() {
+                if (!audioCtx) {
+                    audioCtx = new (
+                        window.AudioContext || window.webkitAudioContext
+                    )();
+                }
+                return audioCtx;
+            }
+
+            function playPrintSound() {
+                if (!soundEnabled) return;
+                const ctx = getAudioCtx();
+                const duration = 0.08;
+                const buffer = ctx.createBuffer(
+                    1,
+                    ctx.sampleRate * duration,
+                    ctx.sampleRate,
+                );
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < data.length; i++) {
+                    // White noise burst, decaying
+                    data[i] =
+                        (Math.random() * 2 - 1) *
+                        (1 - i / data.length) ** 2 *
+                        0.15;
+                }
+                const source = ctx.createBufferSource();
+                source.buffer = buffer;
+
+                // Bandpass to sound more mechanical
+                const filter = ctx.createBiquadFilter();
+                filter.type = "bandpass";
+                filter.frequency.value = 2000 + Math.random() * 1000;
+                filter.Q.value = 1.5;
+
+                source.connect(filter);
+                filter.connect(ctx.destination);
+                source.start();
+            }
+
+            function playFeedSound() {
+                if (!soundEnabled) return;
+                const ctx = getAudioCtx();
+                const duration = 0.12;
+                const buffer = ctx.createBuffer(
+                    1,
+                    ctx.sampleRate * duration,
+                    ctx.sampleRate,
+                );
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < data.length; i++) {
+                    // Lower rumble for paper feed
+                    const t = i / ctx.sampleRate;
+                    data[i] =
+                        (Math.random() * 2 - 1) *
+                            (1 - i / data.length) ** 3 *
+                            0.08 +
+                        Math.sin(t * 200) * (1 - i / data.length) ** 2 * 0.06;
+                }
+                const source = ctx.createBufferSource();
+                source.buffer = buffer;
+
+                const filter = ctx.createBiquadFilter();
+                filter.type = "lowpass";
+                filter.frequency.value = 800;
+
+                source.connect(filter);
+                filter.connect(ctx.destination);
+                source.start();
+            }
+
+            // Sound on by default
+            soundToggle.classList.add("active");
+            soundToggle.setAttribute(
+                "aria-label",
+                "Sound on - toggle printer sound",
+            );
+
+            soundToggle.addEventListener("click", (e) => {
+                e.stopPropagation();
+                soundEnabled = !soundEnabled;
+                soundToggle.classList.toggle("active", soundEnabled);
+                soundToggle.setAttribute(
+                    "aria-label",
+                    soundEnabled
+                        ? "Sound on - toggle printer sound"
+                        : "Sound off - toggle printer sound",
+                );
+                if (soundEnabled) {
+                    getAudioCtx();
+                    playPrintSound();
+                }
+            });
+
+            // -- Flatten acts into node list --
+            function flattenStory(story) {
+                const flat = [];
+                for (const act of story.acts) {
+                    for (const node of act.nodes) {
+                        flat.push(node);
+                    }
+                }
+                return flat;
+            }
+
+            // -- Render a single node (returns element, doesn't animate text lines) --
+            function renderNode(node) {
+                const el = document.createElement("div");
+                el.classList.add("node");
+
+                switch (node.type) {
+                    case "header": {
+                        el.classList.add("node-enter", "node-header");
+                        const text = node.lines.join("\n");
+                        if (text.trim() === "") {
+                            el.classList.add("empty-header");
+                        } else {
+                            el.textContent = text;
+                        }
+                        break;
+                    }
+
+                    case "text": {
+                        el.classList.add("node-text");
+                        for (const line of node.lines) {
+                            const span = document.createElement("span");
+                            span.classList.add("line");
+                            span.textContent = line;
+                            if (
+                                line.includes(">>> DENIED <<<") ||
+                                line.includes(">>> DEFERRED <<<")
+                            ) {
+                                span.classList.add(
+                                    line.includes("DENIED")
+                                        ? "node-denied"
+                                        : "node-deferred",
+                                );
+                            }
+                            el.appendChild(span);
+                        }
+                        break;
+                    }
+
+                    case "divider": {
+                        el.classList.add("node-enter", "node-divider");
+                        break;
+                    }
+
+                    case "choice": {
+                        el.classList.add("node-enter", "node-choice");
+                        waitingForChoice = true;
+                        for (const option of node.options) {
+                            const btn = document.createElement("button");
+                            btn.type = "button";
+                            btn.classList.add("choice-btn");
+                            btn.textContent = `[ ${option} ]`;
+                            btn.addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                if (!waitingForChoice) return;
+                                lastChoice = option;
+                                el.querySelectorAll(".choice-btn").forEach(
+                                    (b) => {
+                                        if (b === btn) {
+                                            b.classList.add("chosen");
+                                        } else {
+                                            b.classList.add("not-chosen");
+                                        }
+                                    },
+                                );
+                                waitingForChoice = false;
+                                playPrintSound();
+                                setTimeout(() => advance(), 300);
+                            });
+                            el.appendChild(btn);
+                        }
+                        break;
+                    }
+
+                    case "pause": {
+                        el.style.display = "none";
+                        break;
+                    }
+
+                    case "ending": {
+                        el.style.display = "none";
+                        break;
+                    }
+                }
+
+                paper.appendChild(el);
+                return el;
+            }
+
+            // -- Print text lines with stagger --
+            function printLines(el, callback) {
+                const lines = el.querySelectorAll(".line");
+                if (lines.length === 0) {
+                    callback();
+                    return;
+                }
+
+                printing = true;
+                printTimers = [];
+                let i = 0;
+
+                function revealNext() {
+                    if (i >= lines.length) {
+                        printing = false;
+                        printTimers = [];
+                        callback();
+                        return;
+                    }
+                    lines[i].classList.add("printed");
+                    playPrintSound();
+                    scrollToBottom(false);
+                    i++;
+                    if (i < lines.length) {
+                        printTimers.push(setTimeout(revealNext, 80));
+                    } else {
+                        printing = false;
+                        printTimers = [];
+                        callback();
+                    }
+                }
+
+                revealNext();
+            }
+
+            // -- Complete all pending lines instantly --
+            function finishPrinting() {
+                for (const t of printTimers) clearTimeout(t);
+                printTimers = [];
+                // Reveal all unprinted lines
+                paper.querySelectorAll(".line:not(.printed)").forEach((l) => {
+                    l.classList.add("printed");
+                });
+                printing = false;
+                printerLight.classList.remove("on");
+                scrollToBottom(false);
+            }
+
+            // -- Idle prompt --
+            function showPrompt() {
+                tapPrompt.classList.remove("hidden");
+                tapPrompt.classList.add("visible");
+            }
+
+            function resetIdleTimer() {
+                clearTimeout(idleTimer);
+                if (currentIndex < nodes.length && !paused) {
+                    idleTimer = setTimeout(showPrompt, 8000);
+                }
+            }
+
+            function hidePrompt() {
+                tapPrompt.classList.remove("visible");
+                tapPrompt.classList.add("hidden");
+                resetIdleTimer();
+            }
+
+            // -- Auto-scroll so newest content sits just above the printer --
+            function scrollToBottom(smooth) {
+                setTimeout(() => {
+                    paper.scrollTo({
+                        top: paper.scrollHeight,
+                        behavior: smooth ? "smooth" : "instant",
+                    });
+                }, 50);
+            }
+
+            // -- Advance to next node --
+            function advance() {
+                // Tap during line-by-line printing: complete instantly
+                if (printing) {
+                    finishPrinting();
+                    return;
+                }
+
+                if (paused || waitingForChoice) return;
+                if (currentIndex >= nodes.length) {
+                    tapPrompt.classList.remove("visible");
+                    tapPrompt.classList.add("hidden");
+                    clearTimeout(idleTimer);
+                    printerLight.classList.remove("on");
+                    return;
+                }
+
+                // First tap: init audio context (browser requires user gesture)
+                if (!hasStarted) {
+                    hasStarted = true;
+                    if (soundEnabled) getAudioCtx();
+                }
+
+                hidePrompt();
+
+                const node = nodes[currentIndex];
+
+                // Skip variant nodes that don't match last choice
+                if (node.variant && node.variant !== lastChoice) {
+                    currentIndex++;
+                    advance();
+                    return;
+                }
+
+                // Handle ending
+                if (node.type === "ending") {
+                    paused = true;
+                    tapPrompt.classList.remove("visible");
+                    tapPrompt.classList.add("hidden");
+                    clearTimeout(idleTimer);
+                    printerLight.classList.remove("on");
+                    currentIndex++;
+
+                    const endingText = node.lines ? node.lines.join("\n") : "";
+                    document.getElementById("ending-text").textContent =
+                        endingText;
+
+                    setTimeout(() => {
+                        document
+                            .getElementById("paper-torn-bottom")
+                            .classList.add("visible");
+                    }, 800);
+
+                    setTimeout(() => {
+                        // Scroll entire paper group away
+                        document
+                            .getElementById("paper-group")
+                            .classList.add("scroll-away");
+                        printerLight.classList.add("error");
+                    }, 2000);
+
+                    setTimeout(() => {
+                        document
+                            .getElementById("ending-text")
+                            .classList.add("visible");
+                    }, 5500);
+
+                    return;
+                }
+
+                // Handle pause
+                if (node.type === "pause") {
+                    paused = true;
+                    tapPrompt.classList.remove("visible");
+                    tapPrompt.classList.add("hidden");
+                    clearTimeout(idleTimer);
+                    dimOverlay.classList.add("active");
+                    // Show text in the void if provided
+                    if (node.lines && node.lines.length > 0) {
+                        dimText.textContent = node.lines.join("\n");
+                        setTimeout(() => dimText.classList.add("visible"), 600);
+                    }
+                    const duration = node.duration === "long" ? 4500 : 2500;
+                    setTimeout(() => {
+                        dimText.classList.remove("visible");
+                        dimOverlay.classList.remove("active");
+                        setTimeout(() => {
+                            dimText.textContent = "";
+                            paused = false;
+                            currentIndex++;
+                            advance();
+                        }, 800);
+                    }, duration);
+                    return;
+                }
+
+                const el = renderNode(node);
+                currentIndex++;
+
+                // Printer light
+                printerLight.classList.add("on");
+
+                // Text nodes: stagger lines. Everything else: instant.
+                if (node.type === "text") {
+                    playFeedSound();
+                    printLines(el, () => {
+                        printerLight.classList.remove("on");
+                        resetIdleTimer();
+                    });
+                } else {
+                    playPrintSound();
+                    playFeedSound();
+                    scrollToBottom(true);
+                    setTimeout(() => printerLight.classList.remove("on"), 200);
+                }
+            }
+
+            // -- Input handlers --
+            function handleTap(e) {
+                if (
+                    e.target.closest(".choice-btn") ||
+                    e.target.closest(".sound-toggle")
+                )
+                    return;
+                // Ignore if user is selecting text
+                const selection = window.getSelection();
+                if (selection && selection.toString().length > 0) return;
+                advance();
+            }
+
+            document.addEventListener("click", handleTap);
+            document.addEventListener("keydown", (e) => {
+                if (e.key === " " || e.key === "Enter") {
+                    // Don't intercept if focus is on a button
+                    if (
+                        e.target.closest(".choice-btn") ||
+                        e.target.closest(".sound-toggle")
+                    )
+                        return;
+                    e.preventDefault();
+                    advance();
+                }
+            });
+
+            // -- Init --
+            async function init() {
+                try {
+                    const res = await fetch("story.json");
+                    const story = await res.json();
+                    nodes = flattenStory(story);
+
+                    // Print title from story data on load
+                    setTimeout(() => {
+                        const title = document.createElement("div");
+                        title.classList.add(
+                            "node",
+                            "node-enter",
+                            "node-header",
+                        );
+                        document.querySelector(".torn-edge").style.flexBasis =
+                            "12px";
+                        paper.style.paddingTop = "24px";
+                        paper.style.paddingBottom = "24px";
+                        title.textContent = story.title;
+                        paper.appendChild(title);
+                        if (soundEnabled) getAudioCtx();
+                        hasStarted = true;
+                        playPrintSound();
+                        playFeedSound();
+                        printerLight.classList.add("on");
+                        setTimeout(
+                            () => printerLight.classList.remove("on"),
+                            200,
+                        );
+                        scrollToBottom(true);
+                        setTimeout(showPrompt, 1000);
+                    }, 600);
+                } catch (err) {
+                    paper.textContent = `RECEIPT PRINTER ERROR: ${err.message}`;
+                }
+            }
+
+            init();
+        </script>
+    </body>
+</html>
