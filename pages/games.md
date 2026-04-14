@@ -11,7 +11,7 @@ A scrolling receipt that tells the story of three years at a restaurant you buil
 Thermal printer. Fake choices. One punchline.
 
 **Format:** Web  
-**Time:** 10-15 minutes
+**Time:** 15-30 minutes
 
 ---
 
