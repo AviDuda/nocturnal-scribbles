@@ -25,7 +25,7 @@ Receipts are also just a really good format for this kind of story. They don't h
 
 I wanted it to feel like a physical thing, not a web page with text on it. There's a CSS thermal printer at the bottom of your screen with a slot, a status light, and a little model number.[^model] Paper feeds upward as you tap, with that jerky `steps()` CSS timing that thermal paper actually has. The sound is Web Audio API, a bandpass-filtered noise burst for the print head and a low-frequency rumble for the paper feed, both synthesized on the fly so there's no audio file to load.
 
-When you open the game, the screen is empty. Just the printer sitting at the bottom in a dark void. First tap and a small strip of paper appears. It grows as you go, and when there's more paper than screen, it starts scrolling. Lines print one by one within each section, and if you get impatient you can tap again to skip to the end of the current block.[^skip]
+When you open the game, the screen is empty. Just the printer sitting at the bottom in a dark void. Then only a small strip of paper appears. It grows as you tap, and when there's more paper than screen, it starts scrolling. Lines print one by one within each section, and if you get impatient you can tap again to skip to the end of the current block.[^skip]
 
 I won't spoil what happens at the end, but the printer does something different. You'll know when it's over.
 
