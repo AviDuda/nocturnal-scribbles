@@ -50,14 +50,14 @@
             .game {
                 width: 384px;
                 max-width: calc(100vw - 32px);
-                height: 100vh;
+                height: 100svh;
                 display: flex;
                 flex-direction: column;
             }
 
             /* Dark void above paper -- shrinks as paper grows, min 5vh */
             .void {
-                flex: 1 0 5vh;
+                flex: 1 0 5svh;
             }
 
             /* -- Printer box -- */
@@ -373,7 +373,7 @@
                 transition:
                     transform 4s ease-in,
                     opacity 3.5s ease-in;
-                transform: translateY(-150vh);
+                transform: translateY(-150svh);
                 opacity: 0;
             }
 
