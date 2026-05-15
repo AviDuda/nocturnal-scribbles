@@ -2,10 +2,42 @@
 // Depends on theme-shared.js being loaded first
 
 const T = window.ThemeUtils;
+
+// Redirect HN referrers to ?theme=geocities so the URL reflects the theme
 const isFromHN = document.referrer.includes("news.ycombinator.com");
-const theme = isFromHN
-	? "geocities"
-	: localStorage.getItem("theme") || "system";
+if (isFromHN && !new URLSearchParams(window.location.search).has("theme")) {
+	window.location.search = "?theme=geocities";
+}
+
+// All valid theme values (standard + hotdog variants + meta themes)
+const VALID_THEMES = [
+	"system",
+	"light",
+	"dark",
+	"oled",
+	"terminal",
+	"gameboy",
+	"halflife",
+	"vaporwave",
+	"synthwave",
+	"hotdog-ketchup",
+	"hotdog-mustard",
+	"shuffle",
+	"chaos",
+	"shifting",
+	"cursed",
+	"geocities",
+];
+
+function urlTheme(): string | null {
+	const param = new URLSearchParams(window.location.search).get("theme");
+	if (param && VALID_THEMES.includes(param)) {
+		return param;
+	}
+	return null;
+}
+
+const theme = urlTheme() || localStorage.getItem("theme") || "system";
 let activeTheme = theme;
 const themes = "__CHAOS_THEMES__".split(",");
 
