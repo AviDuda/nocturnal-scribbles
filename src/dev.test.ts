@@ -403,6 +403,9 @@ describe("Dev Server", () => {
 
 			const watchers = setupWatchers(rebuild, [TEST_DIRS.watchDir]);
 
+			// Let fs.watch initialize before writing (it's async)
+			await Bun.sleep(100);
+
 			// Write a markdown file to trigger rebuild
 			writeFileSync(join(TEST_DIRS.watchDir, "test-post.md"), "# Test");
 
