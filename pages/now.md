@@ -6,19 +6,19 @@ description: "Current focus, recent wins, and what I'm working on."
 
 # Currently focused on
 
-- Making small (34,000 lines of code counts as small, right?) games
-- Building LLM tools for game market analysis (work)
+- Trying to get back to having an emergency fund after burning out and finding a job after a few months
+- Slowly progressing with [forepaw](https://github.com/aviraccoon/forepaw), accessibility-focused computer automation
 - Exploring Prague's cafe scene
 
 # Recent wins
 
-- Procedural music player for the blog
-- [rummage](https://github.com/aviraccoon/rummage) - personal finance tool (open source)
-- [The Review](/games/the-review/) - fake Steam store page
+- Getting much further with forepaw than expected after getting curious how things work
+- Quitting my last job and getting [so many thanks](/posts/thank-you-for-your-service/)
 
 # Current interests
 
+- Exploring accessibility tooling and trying to make things better for folks needing it
 - Game development as my creative medium
 - Improving developer workflows and tooling
 
-Last updated: February 2026
+Last updated: August 2026

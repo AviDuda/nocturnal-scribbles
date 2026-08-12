@@ -12,7 +12,8 @@ I'm nonbinary, a furry, therian,[^1] and have untreated ADHD (attempts at gettin
 
 # What I do
 
-I've been in game dev for over 13 years, starting at 19. Currently a Senior Platform Engineer at [GameDiscoverCo](https://gamediscover.co/), fighting with React, TypeScript and Go to make gaming data visible. Before that, I spent years at SCS Software working on Euro Truck Simulator 2 - during which I created the Czech & Slovak Games Week, now [the largest multi-game non-Valve Steam event](https://store.steampowered.com/news/group/4145017/view/497186807117513037).
+I've been in game dev for over 13 years, starting at 19. I'm now outside of the games industry, burning out twice was enough.  
+Last time around games was as a Senior Platform Engineer at [GameDiscoverCo](https://gamediscover.co/), fighting with React, TypeScript and Go to make gaming data visible. Before that, I spent years at SCS Software working on Euro Truck Simulator 2 - during which I created the Czech & Slovak Games Week, now [the largest multi-game non-Valve Steam event](https://store.steampowered.com/news/group/4145017/view/497186807117513037).
 
 My background is a weird mix of programming, marketing, community management, and production. Recruiters get confused. I stopped caring.
 
